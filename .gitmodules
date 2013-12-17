@@ -1,0 +1,3 @@
+[submodule "xcproject/bgcommander"]
+	path = xcproject/bgcommander
+	url = git@github.com:popavo/bgcommander.git

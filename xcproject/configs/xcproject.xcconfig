@@ -1,0 +1,18 @@
+// xcproject build settings
+
+#include "common.xcconfig"
+
+XCP_VERSION = 0.1
+XCP_BUILD = 16
+
+PRODUCT_NAME = xcproject
+XCP_GCC_PREPROCESSOR_DEFINITIONS = PROJECT=XCProject XCP_VERSION=$(XCP_VERSION) XCP_BUILD=$(XCP_BUILD)
+
+OTHER_LDFLAGS = -framework IDEFoundation -framework DevToolsCore -undefined dynamic_lookup -headerpad_max_install_names
+
+GCC_PREFIX_HEADER = xcproject/xcproject-Prefix.pch
+
+ALWAYS_SEARCH_USER_PATHS = NO
+LD_RUNPATH_SEARCH_PATHS = $(DEVELOPER_DIR)/../OtherFrameworks $(DEVELOPER_DIR)/../Frameworks $(DEVELOPER_DIR)/../SharedFrameworks /Applications/Xcode.app/Contents/OtherFrameworks /Applications/Xcode.app/Contents/Frameworks /Applications/Xcode.app/Contents/SharedFrameworks
+FRAMEWORK_SEARCH_PATHS = $(DEVELOPER_DIR)/../OtherFrameworks $(DEVELOPER_DIR)/../Frameworks
+HEADER_SEARCH_PATHS = $(SRCROOT)/include $(SRCROOT)/xcproject/bgcommander/BGCommander/BGCommander $(SRCROOT)/xcproject/bgcommander/gbcli/GBCli/src
