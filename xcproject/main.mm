@@ -9,17 +9,17 @@
 #import "main.h"
 
 int listf(BGStringVector args, GBSettings* options, BGCommand& command) {
-
+  std::cout << __PRETTY_FUNCTION__ << std::endl << args << std::endl;
   return 0;
 }
 
 int addf(BGStringVector args, GBSettings* options, BGCommand& command) {
-
+  std::cout << __PRETTY_FUNCTION__ << std::endl << args << std::endl;
   return 0;
 }
 
 int setConfigf(BGStringVector args, GBSettings* options, BGCommand& command) {
-
+  std::cout << __PRETTY_FUNCTION__ << std::endl << args << std::endl;
   return 0;
 }
 
