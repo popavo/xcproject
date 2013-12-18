@@ -9,17 +9,23 @@
 #import "main.h"
 
 int listf(BGStringVector args, GBSettings* options, BGCommand& command) {
-  std::cout << __PRETTY_FUNCTION__ << std::endl << args << std::endl;
+  std::cout << __PRETTY_FUNCTION__ << std::endl;
+  command.printSettings();
+  std::cout << "Args" << std::endl << args << std::endl;
   return 0;
 }
 
 int addf(BGStringVector args, GBSettings* options, BGCommand& command) {
-  std::cout << __PRETTY_FUNCTION__ << std::endl << args << std::endl;
+  std::cout << __PRETTY_FUNCTION__ << std::endl;
+  command.printSettings();
+  std::cout << "Args" << std::endl << args << std::endl;
   return 0;
 }
 
 int setConfigf(BGStringVector args, GBSettings* options, BGCommand& command) {
-  std::cout << __PRETTY_FUNCTION__ << std::endl << args << std::endl;
+  std::cout << __PRETTY_FUNCTION__ << std::endl;
+  command.printSettings();
+  std::cout << "Args" << std::endl << args << std::endl;
   return 0;
 }
 
@@ -27,6 +33,9 @@ int setConfigf(BGStringVector args, GBSettings* options, BGCommand& command) {
 int main(int argc, const char * argv[]) {
   @autoreleasepool {
     CommanderAutoRunner autorunner;
+
+
+#pragma mark - list
 
     BGOptionDefinitionVector listOpts = {
       { 0,	 nil,                 @"Project specifiers",                      GBOptionSeparator },
@@ -42,11 +51,13 @@ int main(int argc, const char * argv[]) {
       { 'x', @"xcconfigs",        @"List base xcconfig files",                GBValueNone }
     };
 
-    BGCommand list("list", "List the contents of the specified workspace or project", listOpts);
+    BGCommand& list = commander.addCommand({"list", "List the contents of the specified workspace or project", listOpts});
     list.setRunFunction(listf);
 
+
+#pragma mark - add
+
     BGOptionDefinitionVector addOpts = {
-      { 0,	 nil,                 @"Global add options",                      GBOptionSeparator },
       { 'd', @"dry",              @"Only show what the results would be",     GBValueNone },
       { 'o', @"overwrite",        @"Overwrite any existing item",             GBValueNone },
       { 'v', @"verbose",          @"Print status",                            GBValueNone },
@@ -60,14 +71,16 @@ int main(int argc, const char * argv[]) {
       { 'g', @"group",            @"Specify a group",                         GBValueRequired }
     };
     
-    BGCommand add("add", "Add a project item", addOpts);
+    BGCommand& add = commander.addCommand({"add", "Add a project item", addOpts});
     add.setRunFunction(addf);
 
+
+#pragma mark - set-config
+
     BGOptionDefinitionVector setConfigOpts = {
-      { 0,	 nil,                 @"Global add options",                      GBOptionSeparator },
       { 'd', @"dry",              @"Only show what the results would be",     GBValueNone },
-      { 'v', @"verbose",          @"Print status",                            GBValueNone },
       { 'r', @"replace",          @"Replace an existing xcconfig",            GBValueNone },
+      { 'v', @"verbose",          @"Print status",                            GBValueNone },
 
       { 0,	 nil,                 @"Project specifiers",                      GBOptionSeparator },
       { 'w', @"workspace",        @"Specify the workspace to read",           GBValueRequired },
@@ -77,12 +90,10 @@ int main(int argc, const char * argv[]) {
       { 't', @"target",           @"Specify a target",                        GBValueRequired }
     };
 
-    BGCommand setConfig("set-config", "Set the base configuration of target to an xcconfig", setConfigOpts);
+    BGCommand& setConfig = commander.addCommand({"set-config", "Set the base configuration of target to an xcconfig", setConfigOpts});
     setConfig.setRunFunction(setConfigf);
-
-    commander.addCommand(list);
-    commander.addCommand(add);
-    commander.addCommand(setConfig);
+    setConfig.addSyntax("set-config -drv -w <workspace> -s <scheme> -c <configuration> [-t <target>] FILE");
+    setConfig.addSyntax("set-config -drv -p <project> -c <configuration> [-t <target>] FILE");
   }
   return 0;
 }
