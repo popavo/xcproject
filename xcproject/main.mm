@@ -165,6 +165,9 @@ void listTarget(PBXTarget* target, GBSettings* settings) {
   if (!target || !settings) return;
   // print target info
   std::cout << target.name << std::endl;
+  if ([settings boolForKey:keys.verbose]) {
+    // Print more info about target
+  }
   if (settings[keys.configuration]) {
     listConfigurationList([target buildConfigurationList], settings);
   }
@@ -200,6 +203,7 @@ int main(int argc, const char * argv[]) {
     };
 
     Command& list = commander.addCommand({"list", "List the contents of the specified workspace or project", listOpts});
+    list.addGlobalOption({ 'v', keys.verbose, @"Print more information", GBValueNone});
     list.setRunBlock(^int(StringVector args, GBSettings *settings, Command &command) {
       PBXProject* project = projectWithSettings(settings);
       if (!project) return 2;
