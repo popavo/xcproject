@@ -1,3 +1,4 @@
+#import <DevToolsCore/PBXGlobalID.h>
 #import <DevToolsCore/PBXBuildFile.h>
 #import <DevToolsCore/PBXBuildPhase.h>
 #import <DevToolsCore/PBXContainer.h>

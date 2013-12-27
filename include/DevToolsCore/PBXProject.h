@@ -281,7 +281,7 @@
 -(void)setProductReferenceGroup:(id)arg1;
 -(id)productReferenceGroup;
 -(id)fileSystemWatcher;
--(id)referencedProjects;
+-(NSArray*)referencedProjects;
 -(void)removeProjectReference:(id)arg1;
 -(id)addProjectReferenceForProject:(id)arg1;
 -(void)addProjectReference:(id)arg1;
@@ -413,8 +413,8 @@
 -(id)userBuildSettings;
 -(id)projectOverridingBuildSettings;
 -(id)buildConfigurationList;
--(id)name;
--(id)path;
+-(NSString*)name;
+-(NSString*)path;
 -(void)setPath:(id)arg1;
 -(BOOL)writeToFileSystemProjectFile:(BOOL)arg1 userFile:(BOOL)arg2 checkNeedsRevert:(BOOL)arg3;
 -(BOOL)_writeToFileSystem;

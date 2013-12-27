@@ -10,14 +10,18 @@
 #import <AppKit/AppKit.h>
 #import <sysexits.h>
 
+#import <DVTFoundation/DVTFoundation.h>
 #import <DevToolsCore/DevToolsCore.h>
 #import <IDEFoundation/IDEFoundation.h>
-
-#if defined(__cplusplus)
 
 #import "Macros.h"
 #define TAG STR_PROJECT_NAME(PROJECT) // => "CutAndPaste"
 
+#import "p.h"
+
+#if defined(__cplusplus)
+
+#import "XCProjectHelpers.h"
 #import "BGCommander.h"
 
 #endif

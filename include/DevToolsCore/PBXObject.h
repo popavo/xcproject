@@ -38,7 +38,7 @@
 -(id)fallbackClassNameForPListArchive;
 -(id)gidCommentForArchive;
 -(id)classNameForPListArchive;
--(id)globalID;
+-(PBXGlobalID*)globalID;
 -(id)globalIDCreateIfNeeded:(BOOL)arg1;
 -(SEL)selectorForArchiveMask:(int)arg1;
 -(void)_setUnarchivedGlobalIDFromHexString:(id)arg1;

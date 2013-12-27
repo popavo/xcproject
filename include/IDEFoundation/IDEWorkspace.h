@@ -130,7 +130,7 @@
 +(BOOL)_shouldLoadUISubsystems;
 +(BOOL)automaticallyNotifiesObserversOfFileRefsWithContainerLoadingIssues;
 
--(id)initWithFilePath:(NSString*)arg1 extension:(NSString*)arg2 workspace:(id)arg3 error:(NSError**)arg4;
+-(id)initWithFilePath:(id)arg1 extension:(NSString*)arg2 workspace:(id)arg3 error:(NSError**)arg4;
 
 -(id)buildableProductsForBaseName:(id)arg1;
 -(void)_handleIndexablesChange:(id)arg1;

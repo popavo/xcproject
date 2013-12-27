@@ -29,11 +29,11 @@
 +(id)allGroupsForGroup:(id)arg1;
 
 -(id)initWithPath:(id)arg1;
--(id)initWithName:(id)arg1;
--(id)initWithName:(id)arg1 path:(id)arg2;
--(id)initWithName:(id)arg1 path:(id)arg2 sourceTree:(id)arg3 fileType:(id)arg4 extraFileProperties:(id)arg5;
--(id)initWithName:(id)arg1 path:(id)arg2 sourceTree:(id)arg3;
--(id)initWithName:(id)arg1 path:(id)arg2 referenceType:(int)arg3;
+-(id)initWithName:(NSString*)arg1;
+-(id)initWithName:(NSString*)arg1 path:(id)arg2;
+-(id)initWithName:(NSString*)arg1 path:(id)arg2 sourceTree:(id)arg3 fileType:(id)arg4 extraFileProperties:(id)arg5;
+-(id)initWithName:(NSString*)arg1 path:(id)arg2 sourceTree:(id)arg3;
+-(id)initWithName:(NSString*)arg1 path:(id)arg2 referenceType:(int)arg3;
 
 -(void)pruneReferencesBySendingBooleanSelector:(SEL)arg1 toObject:(id)arg2 withContext:(void *)arg3;
 -(long long)compareType:(id)arg1;
@@ -61,7 +61,7 @@
 -(id)gidCommentForArchive;
 -(void)awakeFromPListUnarchiver:(id)arg1;
 -(id)readFromPListUnarchiver:(id)arg1;
--(id)_path;
+-(NSString*)_path;
 -(id)_sourceTree;
 -(BOOL)_unarchivingShouldTranslateToUnitTestFrameworkReference;
 -(BOOL)_archivingShouldTranslateFromUnitTestFrameworkReference;
@@ -126,10 +126,10 @@
 -(id)resolvedAbsoluteDirectory;
 -(id)absoluteDirectory;
 -(id)fileSystemNode;
--(id)resolvedAbsolutePath;
--(id)absolutePath;
--(id)absolutePathForConfigurationNamed:(id)arg1;
--(id)path;
+-(NSString*)resolvedAbsolutePath;
+-(NSString*)absolutePath;
+-(NSString*)absolutePathForConfigurationNamed:(id)arg1;
+-(NSString*)path;
 -(id)sourceTree;
 -(id)_evaluatedPathForSourceTree:(id)arg1 appendPathWhenExpanded:(BOOL)arg2;
 -(id)_evaluatedPathForSourceTree:(id)arg1 appendPathWhenExpanded:(BOOL)arg2 forConfigurationNamed:(id)arg3;
@@ -140,8 +140,8 @@
 -(BOOL)setName:(id)arg1 syncDisk:(BOOL)arg2;
 -(BOOL)_doFileSystemCopyTo:(id)arg1 deleteOriginal:(BOOL)arg2;
 -(BOOL)_doFileSystemCopyFrom:(id)arg1 to:(id)arg2 deleteOriginal:(BOOL)arg3;
--(void)setName:(id)arg1;
--(id)name;
+-(void)setName:(NSString*)arg1;
+-(NSString*)name;
 -(BOOL)allowsEditing;
 -(id)absoluteExpandedPathForString:(id)arg1;
 -(id)absoluteExpandedPathForString:(id)arg1 forConfigurationNamed:(id)arg2;

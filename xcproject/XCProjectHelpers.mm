@@ -66,7 +66,6 @@ void loadAndInitializeFrameworkBundles() {
   callIDEInitialize();
 }
 
-
 PBXProject* loadProject(NSString* projectPath) {
   PBXProject* proj = [PBXProject projectWithFile:projectPath];
 

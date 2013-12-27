@@ -41,8 +41,8 @@
 -(id)addItems:(id)arg1 copy:(BOOL)arg2 createGroupsRecursively:(BOOL)arg3;
 -(id)addItems:(id)arg1 atIndex:(long long)arg2 copy:(BOOL)arg3 createGroupsRecursively:(BOOL)arg4;
 -(id)insertItems:(id)arg1 atIndex:(long long)arg2 copy:(BOOL)arg3 createGroupsRecursively:(BOOL)arg4;
--(id)addFiles:(id)arg1 copy:(BOOL)arg2 createGroupsRecursively:(BOOL)arg3;
--(id)addFiles:(id)arg1 atIndex:(long long)arg2 copy:(BOOL)arg3 createGroupsRecursively:(BOOL)arg4;
+-(NSArray*)addFiles:(id)arg1 copy:(BOOL)arg2 createGroupsRecursively:(BOOL)arg3;
+-(NSArray*)addFiles:(id)arg1 atIndex:(long long)arg2 copy:(BOOL)arg3 createGroupsRecursively:(BOOL)arg4;
 -(id)insertFiles:(id)arg1 atIndex:(long long)arg2 copy:(BOOL)arg3 createGroupsRecursively:(BOOL)arg4;
 -(void)_addChildrenOfFolder:(id)arg1 toList:(id)arg2;
 -(id)_insertRefOfClass:(Class)arg1 withName:(id)arg2 forFile:(id)arg3 ofFileType:(id)arg4 withFileProperties:(id)arg5 atIndex:(long long)arg6;
@@ -70,7 +70,7 @@
 -(BOOL)isGroup;
 -(BOOL)isLeaf;
 -(BOOL)allowsEditingOfChildren;
--(id)name;
+-(NSString*)name;
 -(void)flattenItemsIntoArray:(id)arg1;
 -(void)removeFromFileReferencesAtIndex:(unsigned long long)arg1;
 -(void)replaceInFileReferences:(id)arg1 atIndex:(unsigned long long)arg2;

@@ -35,18 +35,24 @@
 #define XCP_STR(x) #x
 #define XCP_STRINGIFY(macro) XCP_STR(macro)
 
-#if !defined(VERSION_STR)
+#if !defined(VERSION_STR) && !defined(VERSION)
 # if defined(XCP_VERSION)
 #  define VERSION_STR XCP_STRINGIFY(XCP_VERSION)
+#  define VERSION (@ VERSION_STR)
+# else
+#  define VERSION_STR XCP_STRINGIFY(0)
 #  define VERSION (@ VERSION_STR)
 # endif
 #endif
 
-#if !defined(BUILD_STR)
+#if !defined(BUILD_STR) && !defined(BUILD)
 # if defined(XCP_BUILD)
 #  define BUILD_STR XCP_STRINGIFY(XCP_BUILD)
 #  define BUILD (@ BUILD_STR)
-#endif
+# else
+#  define BUILD_STR XCP_STRINGIFY(0)
+#  define BUILD (@ BUILD_STR)
+# endif
 #endif
 
 
@@ -54,4 +60,32 @@
 # define EQ_OPERATOR(__type, __test) \
    bool operator ==(__type rs) const { return __test; } \
    bool operator !=(__type rs) const { return !(*this == rs); }
+#endif
+
+#if !defined(POG)
+#if __cplusplus
+#define POG(arg) std::cout << pStringFromAnyType(@encode(__typeof__(arg)), (arg)) << std::endl
+#else
+#define POG(arg) printf("%s\n", pStringFromAnyType(@encode(__typeof__(arg)), (arg)))
+#endif
+#endif
+
+#if !defined(LOG)
+#if __cplusplus
+#define LOG(arg) std::cout << arg << std::endl
+#else
+#define LOG(arg) printf("%s\n", arg)
+#endif
+#endif
+
+#if defined(__MACH__)
+#ifdef __cplusplus
+#define XCP_EXTERN		extern "C"
+#define XCP_PRIVATE_EXTERN	__attribute__((visibility("hidden"))) extern "C"
+#define XCP_PRIVATE          __attribute__((visibility("hidden")))
+#else
+#define XCP_EXTERN		extern
+#define XCP_PRIVATE_EXTERN	__attribute__((visibility("hidden"))) extern
+#define XCP_PRIVATE          __attribute__((visibility("hidden")))
+#endif
 #endif
