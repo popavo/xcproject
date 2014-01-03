@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 BinaryAge. All rights reserved.
 //
 
-#import "main.h"
+#import <BGCommander.h>
 
 XCProjectKeys keys;
 

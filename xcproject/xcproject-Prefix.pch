@@ -19,10 +19,10 @@
 
 #import "p.h"
 
-#if defined(__cplusplus)
+#if __cplusplus
 
 #import "XCProjectHelpers.h"
-#import "BGCommander.h"
+#import <BGCommander.h>
 
 #endif
 

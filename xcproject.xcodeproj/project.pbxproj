@@ -7,19 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D322A579186DED1B00D31D0E /* GBOptionsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D3892C271860E3880077729E /* GBOptionsHelper.m */; };
 		D32347B018614CF800DB65AA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32347AD18614CF100DB65AA /* Cocoa.framework */; };
+		D33CCC721876331300A1B945 /* GBSettings+XCProject.mm in Sources */ = {isa = PBXBuildFile; fileRef = D33CCC711876331300A1B945 /* GBSettings+XCProject.mm */; };
 		D35678D918663C6900D13A28 /* xcproject.rb in CopyFiles */ = {isa = PBXBuildFile; fileRef = D35678D618663C4000D13A28 /* xcproject.rb */; };
 		D3892B931860DD220077729E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3892B921860DD220077729E /* main.mm */; };
 		D3892B971860DD220077729E /* xcproject.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = D3892B961860DD220077729E /* xcproject.1 */; };
 		D3892BFD1860E16B0077729E /* XCProjectHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3892BFC1860E16B0077729E /* XCProjectHelpers.mm */; };
-		D3892C1E1860E3710077729E /* Command.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3892C111860E3710077729E /* Command.mm */; };
-		D3892C1F1860E3710077729E /* Commander.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3892C131860E3710077729E /* Commander.mm */; };
-		D3892C201860E3710077729E /* StringRef.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3892C181860E3710077729E /* StringRef.mm */; };
-		D3892C211860E3710077729E /* GBOptionsHelper+BGCommander.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3892C1A1860E3710077729E /* GBOptionsHelper+BGCommander.mm */; };
-		D3892C221860E3710077729E /* GBSettings+BGCommander.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3892C1C1860E3710077729E /* GBSettings+BGCommander.mm */; };
-		D3892C2A1860E3880077729E /* GBCommandLineParser.m in Sources */ = {isa = PBXBuildFile; fileRef = D3892C251860E3880077729E /* GBCommandLineParser.m */; };
-		D3892C2C1860E3880077729E /* GBSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = D3892C291860E3880077729E /* GBSettings.m */; };
 		D3FE65A918660A1700543CD9 /* p.m in Sources */ = {isa = PBXBuildFile; fileRef = D3FE65A818660A1700543CD9 /* p.m */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +23,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = D3A10E5A184CF61200287D5E;
 			remoteInfo = BGCommander;
+		};
+		D3E3F9B318760E2100B9BA13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D3892C081860E2F50077729E /* BGCommander.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D3C3707C1875FDFF0057463C;
+			remoteInfo = libbgcommander;
+		};
+		D3E3F9B718760E4C00B9BA13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D3892C081860E2F50077729E /* BGCommander.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D3C3707B1875FDFF0057463C;
+			remoteInfo = libbgcommander;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -58,45 +65,24 @@
 
 /* Begin PBXFileReference section */
 		D32347AD18614CF100DB65AA /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		D33CCC701876331300A1B945 /* GBSettings+XCProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GBSettings+XCProject.h"; sourceTree = "<group>"; };
+		D33CCC711876331300A1B945 /* GBSettings+XCProject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "GBSettings+XCProject.mm"; sourceTree = "<group>"; };
 		D35678D618663C4000D13A28 /* xcproject.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = xcproject.rb; sourceTree = "<group>"; };
 		D3892B8C1860DD220077729E /* _xcproject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = _xcproject; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3892B8F1860DD220077729E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D3892B921860DD220077729E /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		D3892B951860DD220077729E /* xcproject-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "xcproject-Prefix.pch"; sourceTree = "<group>"; };
 		D3892B961860DD220077729E /* xcproject.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = xcproject.1; sourceTree = "<group>"; };
-		D3892BF91860E0FF0077729E /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		D3892BFA1860E15B0077729E /* Macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Macros.h; sourceTree = "<group>"; };
 		D3892BFB1860E16B0077729E /* XCProjectHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCProjectHelpers.h; sourceTree = "<group>"; };
 		D3892BFC1860E16B0077729E /* XCProjectHelpers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XCProjectHelpers.mm; sourceTree = "<group>"; };
 		D3892C011860E1A50077729E /* include */ = {isa = PBXFileReference; lastKnownFileType = folder; path = include; sourceTree = "<group>"; };
 		D3892C081860E2F50077729E /* BGCommander.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BGCommander.xcodeproj; path = xcproject/bgcommander/BGCommander.xcodeproj; sourceTree = "<group>"; };
-		D3892C101860E3710077729E /* Command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Command.h; sourceTree = "<group>"; };
-		D3892C111860E3710077729E /* Command.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Command.mm; sourceTree = "<group>"; };
-		D3892C121860E3710077729E /* Commander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Commander.h; sourceTree = "<group>"; };
-		D3892C131860E3710077729E /* Commander.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Commander.mm; sourceTree = "<group>"; };
-		D3892C141860E3710077729E /* CommanderDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommanderDefines.h; sourceTree = "<group>"; };
-		D3892C151860E3710077729E /* CommanderHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommanderHelpers.h; sourceTree = "<group>"; };
-		D3892C161860E3710077729E /* OptionDefinitionVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionDefinitionVector.h; sourceTree = "<group>"; };
-		D3892C171860E3710077729E /* StringRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringRef.h; sourceTree = "<group>"; };
-		D3892C181860E3710077729E /* StringRef.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringRef.mm; sourceTree = "<group>"; };
-		D3892C191860E3710077729E /* GBOptionsHelper+BGCommander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GBOptionsHelper+BGCommander.h"; sourceTree = "<group>"; };
-		D3892C1A1860E3710077729E /* GBOptionsHelper+BGCommander.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "GBOptionsHelper+BGCommander.mm"; sourceTree = "<group>"; };
-		D3892C1B1860E3710077729E /* GBSettings+BGCommander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GBSettings+BGCommander.h"; sourceTree = "<group>"; };
-		D3892C1C1860E3710077729E /* GBSettings+BGCommander.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "GBSettings+BGCommander.mm"; sourceTree = "<group>"; };
-		D3892C1D1860E3710077729E /* NSStringHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringHelpers.h; sourceTree = "<group>"; };
-		D3892C241860E3880077729E /* GBCommandLineParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GBCommandLineParser.h; sourceTree = "<group>"; };
-		D3892C251860E3880077729E /* GBCommandLineParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBCommandLineParser.m; sourceTree = "<group>"; };
-		D3892C261860E3880077729E /* GBOptionsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GBOptionsHelper.h; sourceTree = "<group>"; };
-		D3892C271860E3880077729E /* GBOptionsHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBOptionsHelper.m; sourceTree = "<group>"; };
-		D3892C281860E3880077729E /* GBSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GBSettings.h; sourceTree = "<group>"; };
-		D3892C291860E3880077729E /* GBSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBSettings.m; sourceTree = "<group>"; };
 		D3892C2E1860E5D10077729E /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = common.xcconfig; sourceTree = "<group>"; };
 		D3892C2F1860E5D10077729E /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = debug.xcconfig; sourceTree = "<group>"; };
 		D3892C301860E5D10077729E /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		D3892C311860E5D10077729E /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		D3892C321860E5D10077729E /* xcproject.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = xcproject.xcconfig; sourceTree = "<group>"; };
-		D3BBC720186DC80100EF2350 /* BGCommander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BGCommander.h; sourceTree = "<group>"; };
-		D3BBC77B186DD0AD00EF2350 /* HashHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HashHelpers.h; sourceTree = "<group>"; };
 		D3FE65A718660A1700543CD9 /* p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p.h; sourceTree = "<group>"; };
 		D3FE65A818660A1700543CD9 /* p.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = p.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -116,6 +102,7 @@
 		D3892B831860DD220077729E = {
 			isa = PBXGroup;
 			children = (
+				D3892C081860E2F50077729E /* BGCommander.xcodeproj */,
 				D3892C011860E1A50077729E /* include */,
 				D3892B911860DD220077729E /* xcproject */,
 				D3892B8E1860DD220077729E /* Frameworks */,
@@ -135,7 +122,6 @@
 			isa = PBXGroup;
 			children = (
 				D32347AD18614CF100DB65AA /* Cocoa.framework */,
-				D3892C081860E2F50077729E /* BGCommander.xcodeproj */,
 				D3892B8F1860DD220077729E /* Foundation.framework */,
 			);
 			name = Frameworks;
@@ -145,8 +131,6 @@
 			isa = PBXGroup;
 			children = (
 				D3FE65A618660A1700543CD9 /* Support */,
-				D3892C0F1860E3710077729E /* BGCommander */,
-				D3892BF91860E0FF0077729E /* main.h */,
 				D3892B921860DD220077729E /* main.mm */,
 				D3892BFB1860E16B0077729E /* XCProjectHelpers.h */,
 				D3892BFC1860E16B0077729E /* XCProjectHelpers.mm */,
@@ -171,48 +155,10 @@
 			isa = PBXGroup;
 			children = (
 				D3892C0E1860E2F50077729E /* BGCommander */,
+				D3E3F9B418760E2100B9BA13 /* libbgcommander.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
-		};
-		D3892C0F1860E3710077729E /* BGCommander */ = {
-			isa = PBXGroup;
-			children = (
-				D3892C231860E3880077729E /* GBCli */,
-				D3892C101860E3710077729E /* Command.h */,
-				D3892C111860E3710077729E /* Command.mm */,
-				D3892C121860E3710077729E /* Commander.h */,
-				D3892C131860E3710077729E /* Commander.mm */,
-				D3892C141860E3710077729E /* CommanderDefines.h */,
-				D3892C151860E3710077729E /* CommanderHelpers.h */,
-				D3892C161860E3710077729E /* OptionDefinitionVector.h */,
-				D3892C171860E3710077729E /* StringRef.h */,
-				D3892C181860E3710077729E /* StringRef.mm */,
-				D3892C191860E3710077729E /* GBOptionsHelper+BGCommander.h */,
-				D3892C1A1860E3710077729E /* GBOptionsHelper+BGCommander.mm */,
-				D3892C1B1860E3710077729E /* GBSettings+BGCommander.h */,
-				D3892C1C1860E3710077729E /* GBSettings+BGCommander.mm */,
-				D3892C1D1860E3710077729E /* NSStringHelpers.h */,
-				D3BBC77B186DD0AD00EF2350 /* HashHelpers.h */,
-				D3BBC720186DC80100EF2350 /* BGCommander.h */,
-			);
-			name = BGCommander;
-			path = bgcommander/BGCommander/BGCommander;
-			sourceTree = "<group>";
-		};
-		D3892C231860E3880077729E /* GBCli */ = {
-			isa = PBXGroup;
-			children = (
-				D3892C241860E3880077729E /* GBCommandLineParser.h */,
-				D3892C251860E3880077729E /* GBCommandLineParser.m */,
-				D3892C261860E3880077729E /* GBOptionsHelper.h */,
-				D3892C271860E3880077729E /* GBOptionsHelper.m */,
-				D3892C281860E3880077729E /* GBSettings.h */,
-				D3892C291860E3880077729E /* GBSettings.m */,
-			);
-			name = GBCli;
-			path = xcproject/bgcommander/gbcli/GBCli/src;
-			sourceTree = SOURCE_ROOT;
 		};
 		D3892C2D1860E5D10077729E /* configs */ = {
 			isa = PBXGroup;
@@ -231,6 +177,8 @@
 			children = (
 				D3FE65A718660A1700543CD9 /* p.h */,
 				D3FE65A818660A1700543CD9 /* p.m */,
+				D33CCC701876331300A1B945 /* GBSettings+XCProject.h */,
+				D33CCC711876331300A1B945 /* GBSettings+XCProject.mm */,
 			);
 			name = Support;
 			path = support;
@@ -252,6 +200,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D3E3F9B818760E4C00B9BA13 /* PBXTargetDependency */,
 			);
 			name = _xcproject;
 			productName = xcproject;
@@ -297,6 +246,13 @@
 			remoteRef = D3892C0D1860E2F50077729E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		D3E3F9B418760E2100B9BA13 /* libbgcommander.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libbgcommander.a;
+			remoteRef = D3E3F9B318760E2100B9BA13 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -312,6 +268,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"$ACTION\" == \"install\" ];then\n    echo \"   copying xcproject.rb to install directory\"\n    cp -f \"$BUILT_PRODUCTS_DIR\"/xcproject.rb \"$INSTALL_PATH\"/xcproject\nfi";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -320,21 +277,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D322A579186DED1B00D31D0E /* GBOptionsHelper.m in Sources */,
 				D3FE65A918660A1700543CD9 /* p.m in Sources */,
-				D3892C211860E3710077729E /* GBOptionsHelper+BGCommander.mm in Sources */,
-				D3892C2A1860E3880077729E /* GBCommandLineParser.m in Sources */,
-				D3892C2C1860E3880077729E /* GBSettings.m in Sources */,
-				D3892C1E1860E3710077729E /* Command.mm in Sources */,
 				D3892BFD1860E16B0077729E /* XCProjectHelpers.mm in Sources */,
+				D33CCC721876331300A1B945 /* GBSettings+XCProject.mm in Sources */,
 				D3892B931860DD220077729E /* main.mm in Sources */,
-				D3892C1F1860E3710077729E /* Commander.mm in Sources */,
-				D3892C221860E3710077729E /* GBSettings+BGCommander.mm in Sources */,
-				D3892C201860E3710077729E /* StringRef.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D3E3F9B818760E4C00B9BA13 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libbgcommander;
+			targetProxy = D3E3F9B718760E4C00B9BA13 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		D3892B981860DD220077729E /* Debug */ = {
