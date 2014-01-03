@@ -8,12 +8,11 @@ XCP_BUILD = 16
 PRODUCT_NAME = _xcproject
 XCP_GCC_PREPROCESSOR_DEFINITIONS = PROJECT=XCProject XCP_VERSION=$(XCP_VERSION) XCP_BUILD=$(XCP_BUILD)
 
-OTHER_LDFLAGS = -framework DevToolsCore -framework DevToolsFoundation -framework IDEFoundation -framework DVTFoundation -undefined dynamic_lookup -headerpad_max_install_names -lbgcommander -force_load $(BUILT_PRODUCTS_DIR)/libbgcommander.a
+OTHER_LDFLAGS = -framework DevToolsCore -framework DevToolsFoundation -framework IDEFoundation -framework DVTFoundation -undefined dynamic_lookup -headerpad_max_install_names
 
 GCC_PREFIX_HEADER = xcproject/xcproject-Prefix.pch
 
 ALWAYS_SEARCH_USER_PATHS = NO
 LD_RUNPATH_SEARCH_PATHS = $(DEVELOPER_DIR)/../Frameworks $(DEVELOPER_DIR)/../OtherFrameworks $(DEVELOPER_DIR)/../SharedFrameworks $(DEVELOPER_DIR)/../Plugins /Applications/Xcode.app/Contents/Frameworks /Applications/Xcode.app/Contents/OtherFrameworks /Applications/Xcode.app/Contents/SharedFrameworks /Applications/Xcode.app/Contents/Plugins
 FRAMEWORK_SEARCH_PATHS = $(DEVELOPER_DIR)/../Frameworks $(DEVELOPER_DIR)/../OtherFrameworks $(DEVELOPER_DIR)/../SharedFrameworks
-HEADER_SEARCH_PATHS = $(SRCROOT)/include $(BUILT_PRODUCTS_DIR)/usr/local/include
-LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)
+HEADER_SEARCH_PATHS = $(SRCROOT)/include

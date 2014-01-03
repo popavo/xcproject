@@ -1,3 +1,5 @@
+#import <type_traits>
+
 void loadAndInitializeFrameworkBundles();
 
 // Temporary redirect stderr to /dev/null in order not to print plugin loading errors
@@ -20,6 +22,32 @@ public:
   }
 };
 
+template <typename _Tp>
+class XCRef {
+public:
+  XCRef(_Tp ref = nil)                              { fRef = ref; }
+  XCRef(const XCRef& rs)                            { fRef = (_Tp)rs; }
+  XCRef(XCRef&& rs)                                 { fRef = std::move(rs.fRef); rs.zero(); }
+  ~XCRef()                                          { zero(); }
+
+  operator _Tp() const                              { return fRef; }
+
+  XCRef& operator =(const _Tp rs)                   { fRef = rs; return *this; }
+  XCRef& operator =(const XCRef& rs)                { fRef = (_Tp)rs; return *this; }
+  XCRef& operator =(XCRef&& rs)                     { fRef = std::move(rs.fRef); rs.zero(); return *this; }
+
+  bool operator ==(_Tp rs) const                    { return fRef == rs; }
+  bool operator !=(_Tp rs) const                    { return !(*this == rs); }
+  bool operator ==(const XCRef& rs) const           { return *this == (_Tp)rs; }
+  bool operator !=(const XCRef& rs) const           { return !(*this == rs); }
+  bool operator !() const                           { return fRef == NULL || fRef == nil || fRef == Nil; }
+
+  void zero()                                       { fRef = NULL; }
+
+private:
+  _Tp fRef;
+};
+
 struct XCProjectKeys {
   // Project specifiers
   NSString* project;
@@ -30,6 +58,7 @@ struct XCProjectKeys {
   // List
   NSString* files;
   NSString* xcconfig;
+  NSString* dependencies;
 
   // Add
   NSString* type;
@@ -52,6 +81,7 @@ struct XCProjectKeys {
     group(@"group"),
     files(@"files"),
     xcconfig(@"xcconfig"),
+    dependencies(@"dependencies"),
     dry(@"dry"),
     copy(@"copy"),
     type(@"type"),

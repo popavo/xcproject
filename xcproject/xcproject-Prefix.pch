@@ -22,7 +22,7 @@
 #if __cplusplus
 
 #import "XCProjectHelpers.h"
-#import <BGCommander.h>
+#import "BGCommander.h"
 
 #endif
 

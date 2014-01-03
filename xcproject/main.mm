@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 BinaryAge. All rights reserved.
 //
 
-#import <BGCommander.h>
 #import "GBSettings+XCProject.h"
 
 XCProjectKeys keys;
@@ -75,40 +74,72 @@ PBXTarget* targetWithProjectAndSettings(PBXProject* project, GBSettings* setting
   return target;
 }
 
-PBXGroup* findGroupNamed(PBXGroup* root, NSString* name) {
-  if (!root || !name) return nil;
-  if ([root.name isEqualToString:name]) return root;
-  PBXGroup* group = nil;
-  for (PBXGroup* _group in [root groups]) {
-    if ([_group.name isEqualToString:name]) {
-      group = _group;
-    } else {
-      group = findGroupNamed(_group, name);
-    }
-    if (group) break;
-  }
-  return group;
+NSString* normalizeColonSeparatedList(NSString* list) {
+  if (!list || !stringContainsStringLike(list, @":")) return list;
+  NSMutableCharacterSet* characters = [NSMutableCharacterSet whitespaceAndNewlineCharacterSet];
+  [characters addCharactersInString:@":"];
+  return [list stringByTrimmingCharactersInSet:characters];
 }
 
-PBXGroup* getOrCreateGroup(PBXGroup* root, NSString* groupName, BOOL* added = NULL) {
-  if (!root || !groupName) return nil;
-  PBXGroup* group = nil;
-  if (added != NULL) *added = NO;
+StringVector splitStringList(NSString* list) {
+  list = normalizeColonSeparatedList(list);
+  StringVector strings;
 
-  group = findGroupNamed(root, groupName);
-
-  if (!group) {
-    for (PBXGroup* _group in [root groups]) {
-      group = findGroupNamed(_group, groupName);
-      if (group) break;
+  while (list.length) {
+    NSRange range = [list rangeOfString:@":"];
+    if (range.location == NSNotFound || range.length == 0) {
+      strings.push_back(list);
+      list = @"";
+    } else {
+      NSString* str = [list substringToIndex:range.location];
+      strings.push_back(str);
+      if (list.length >= range.location + range.length) {
+        list = [list substringFromIndex:range.location + range.length];
+      } else {
+        list = @"";
+      }
     }
   }
 
-  if (!group) {
-    group = [root createNewGroupAtIndex:0];
-    if (!group) return nil;
-    [group setName:groupName];
-    if (added != NULL) *added = YES;
+  return strings;
+}
+
+PBXGroup* findGroup(PBXGroup* root, StringVector& groups) {
+  if (!root || groups.empty()) return nil;
+  if ([root.name isEqualToString:groups.front()]) return root;
+
+  PBXGroup* group = nil;
+  for (PBXGroup* _group in [root groups]) {
+    if ([_group.name isEqualToString:groups.front()]) {
+      group = _group;
+      break;
+    }
+  }
+
+  if (group) {
+    groups.erase(groups.cbegin());
+    if (groups.size()) {
+      PBXGroup* _group = findGroup(group, groups);
+      if (_group) group = _group;
+    }
+  }
+
+  return group ? group : root;
+}
+
+PBXGroup* getOrCreateGroup(PBXGroup* root, StringVector& groups) {
+  PBXGroup* group = findGroup(root, groups);
+  if (!group) return nil;
+
+  if (groups.size()) {
+    for (StringVector::iterator i = groups.begin(); i != groups.end(); i++) {
+      PBXGroup* _g = [group createNewGroupAtIndex:0];
+      if (!_g) return nil;
+      [_g setName:*i];
+      group = _g;
+    }
+
+    groups.clear();
   }
 
   return group;
@@ -165,12 +196,13 @@ void listConfigurationList(XCConfigurationList* configList, GBSettings* settings
 void listTarget(PBXTarget* target, GBSettings* settings) {
   if (!target || !settings) return;
   // print target info
-  std::cout << target.name << std::endl;
-  if ([settings boolForKey:keys.verbose]) {
-    // Print more info about target
-  }
   if (settings[keys.configuration]) {
     listConfigurationList([target buildConfigurationList], settings);
+  } else {
+    std::cout << target.name << std::endl;
+    if ([settings boolForKey:keys.verbose]) {
+      // Print more info about target
+    }
   }
 }
 
@@ -187,6 +219,7 @@ void listGroup(PBXGroup* group, GBSettings* settings) {
 
 int main(int argc, const char * argv[]) {
   @autoreleasepool {
+    
     CommanderAutoRunner autorunner;
 
 
@@ -195,6 +228,7 @@ int main(int argc, const char * argv[]) {
     OptionDefinitionVector listOpts = {
       { 'f', keys.files,            @"List files",                              GBValueNone },
       { 'x', keys.xcconfig,         @"List base xcconfig files",                GBValueNone },
+      { 'd', keys.dependencies,     @"List all dependent targets",              GBValueNone },
 
       { 0,	 nil,                   @"Project specifiers",                      GBOptionSeparator },
       { 'p', keys.project,          @"Specify the project",                     GBValueRequired },
@@ -213,7 +247,7 @@ int main(int argc, const char * argv[]) {
       id targetSettings = settings[keys.target];
       id groupSettings = settings[keys.group];
 
-      if (configurationSettings && (!targetSettings || isNumber(targetSettings))) {
+      if (configurationSettings && (!targetSettings)) {
         listConfigurationList([project buildConfigurationList], settings);
       }
 
@@ -234,7 +268,8 @@ int main(int argc, const char * argv[]) {
       } else if (isString(groupSettings)) {
         // List group info
         //  if settings[@"files"] -> List all files within group
-        listGroup(findGroupNamed([project rootGroup], groupSettings), settings);
+        StringVector groups = splitStringList(groupSettings);
+        listGroup(findGroup([project rootGroup], groups), settings);
       }
 
       return 0;
@@ -244,16 +279,16 @@ int main(int argc, const char * argv[]) {
 #pragma mark - add
 
     OptionDefinitionVector addOpts = {
-      { 'd', keys.dry,              @"Only show what the results would be",     GBValueNone },
-      { 'v', keys.verbose,          @"Print status",                            GBValueNone },
+      { 'd', keys.dry,              @"Only show what the results would be",                                     GBValueNone },
+      { 'v', keys.verbose,          @"Print status",                                                            GBValueNone },
 
-      { 'C', keys.copy,             @"Copy files into project directory",       GBValueNone },
-      { 'T', keys.type,             @"Specify the type of item to add",         GBValueRequired },
+      { 'C', keys.copy,             @"Copy files into project directory",                                       GBValueNone },
+      { 'T', keys.type,             @"Specify the type of item to add",                                         GBValueRequired },
 
-      { 0,	 nil,                   @"Project specifiers",                      GBOptionSeparator },
-      { 'p', keys.project,          @"Specify the project",                     GBValueRequired },
-      { 't', keys.target,           @"Specify a target",                        GBValueRequired },
-      { 'g', keys.group,            @"Specify a group",                         GBValueRequired }
+      { 0,	 nil,                   @"Project specifiers",                                                      GBOptionSeparator },
+      { 'p', keys.project,          @"Specify the project",                                                     GBValueRequired },
+      { 't', keys.target,           @"Specify a target",                                                        GBValueRequired },
+      { 'g', keys.group,            @"Specify a group/colon separated list of groups",                          GBValueRequired }
     };
     
     Command& add = commander.addCommand({"add", "Add a project item", addOpts});
@@ -273,15 +308,19 @@ int main(int argc, const char * argv[]) {
 
       PBXGroup* group = nil;
       NSString* groupName = [settings objectForKey:keys.group];
-      if (groupName) group = findGroupNamed([project rootGroup], groupName);
-      if (!group) group = [project rootGroup];
+      StringVector groups = splitStringList(groupName);
+      if (groups.size()) group = findGroup([project rootGroup], groups);
       if (!group) return 2;
 
       if (stringContainsStringLike(type, keys.group)) {
-        BOOL addedGroup = NO;
-        PBXGroup* _group = getOrCreateGroup(group, groupName, &addedGroup);
+        for (auto const& arg:args) {
+          groups.push_back(arg);
+        }
+
+        PBXGroup* _group = getOrCreateGroup(group, groups);
         if (!_group) return 2;
-        return !(addedGroup && [_group.name isEqualToString:groupName]);
+
+        return ![_group.name isEqualToString:groupName];
       } else {
         NSArray* refs = [group addFiles:[NSArray stringsFromStringVector:&args] copy:[settings boolForKey:keys.copy] createGroupsRecursively:YES];
         if (settings.verbose) {
@@ -300,17 +339,17 @@ int main(int argc, const char * argv[]) {
 #pragma mark - set-config
 
     OptionDefinitionVector setConfigOpts = {
-      { 'a', keys.add,              @"Add any missing items to project",        GBValueNone },
-      { 'd', keys.dry,              @"Only show what the results would be",     GBValueNone },
-      { 'r', keys.replace,          @"Replace an existing xcconfig",            GBValueNone },
-      { 'v', keys.verbose,          @"Print status",                            GBValueNone },
-      { 'C', keys.copy,             @"Copy files into project directory",       GBValueNone },
+      { 'a', keys.add,              @"Add any missing items to project",                                        GBValueNone },
+      { 'd', keys.dry,              @"Only show what the results would be",                                     GBValueNone },
+      { 'r', keys.replace,          @"Replace an existing xcconfig",                                            GBValueNone },
+      { 'v', keys.verbose,          @"Print status",                                                            GBValueNone },
+      { 'C', keys.copy,             @"Copy files into project directory",                                       GBValueNone },
       
-      { 0,   nil,                   @"Project specifiers",                      GBOptionSeparator },
-      { 'p', keys.project,          @"Specify the project",                     GBValueRequired },
-      { 'c', keys.configuration,    @"Specify a configuration",                 GBValueRequired },
-      { 't', keys.target,           @"Specify a target",                        GBValueRequired },
-      { 'g', keys.group,            @"Specify a group",                         GBValueRequired }
+      { 0,   nil,                   @"Project specifiers",                                                      GBOptionSeparator },
+      { 'p', keys.project,          @"Specify the project",                                                     GBValueRequired },
+      { 'c', keys.configuration,    @"Specify a configuration",                                                 GBValueRequired },
+      { 't', keys.target,           @"Specify a target",                                                        GBValueRequired },
+      { 'g', keys.group,            @"Specify a group/colon separated list of groups",                          GBValueRequired }
     };
 
     Command& setConfig = commander.addCommand({"set-config", "Set the base configuration of target to an xcconfig", setConfigOpts});
@@ -363,7 +402,8 @@ int main(int argc, const char * argv[]) {
       PBXFileReference* configRef = [project fileReferenceForPath:configPath];
 
       if (!configRef) {
-        PBXGroup* group = getOrCreateGroup([project rootGroup], [settings objectForKey:keys.group]);
+        StringVector groups = splitStringList(settings[keys.group]);
+        PBXGroup* group = getOrCreateGroup([project rootGroup], groups);
         if (!group) group = [project rootGroup];
         if (!group) return 2;
 

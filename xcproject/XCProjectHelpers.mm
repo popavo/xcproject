@@ -2,6 +2,7 @@
 #import <mach-o/ldsyms.h>
 #import <objc/runtime.h>
 #import "XCProjectHelpers.h"
+#import "CommanderHelpers.h"
 
 NSString* getXcodePath() {
   NSString* path = nil;
