@@ -1,6 +1,7 @@
 void loadAndInitializeFrameworkBundles();
-PBXProject* loadProject(NSString* projectPath);
 
+// Temporary redirect stderr to /dev/null in order not to print plugin loading errors
+// Adapted from http://stackoverflow.com/questions/4832603/how-could-i-temporary-redirect-stdout-to-a-file-in-a-c-program/4832902#4832902
 class ScopedStdErrRedirect {
   int saved_stderr;
 public:
@@ -101,3 +102,13 @@ FORCE_INLINE NSString* relativePathTo(NSString* self, NSString* path) {
   [relativeComponents addObjectsFromArray:[pathComponents subarrayWithRange:NSMakeRange(componentsInCommon, numberOfPathComponents)]];
   return [NSString pathWithComponents:relativeComponents];
 }
+
+#define MEMOIZED_CLASS_GETTER(CLASS, GETTER) \
+  typedef Class CLASS ## Class; \
+  FORCE_INLINE CLASS ## Class GETTER ## Class() { \
+    static CLASS ## Class res = NSClassFromString(@# CLASS); \
+    return res; \
+  }
+
+MEMOIZED_CLASS_GETTER(PBXProject, project);
+MEMOIZED_CLASS_GETTER(XCBuildConfiguration, buildConfiguration);

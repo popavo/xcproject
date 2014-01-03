@@ -21,7 +21,7 @@ PBXProject* projectWithSettings(GBSettings* settings) {
     return nil;
   }
 
-  if (![PBXProject isProjectWrapperExtension:projectArg.pathExtension]) {
+  if (![projectClass() isProjectWrapperExtension:projectArg.pathExtension]) {
     return nil;
   }
 
@@ -40,7 +40,7 @@ PBXProject* projectWithSettings(GBSettings* settings) {
 
   ScopedStdErrRedirect redirect;
 
-  return [PBXProject projectWithFile:path];
+  return [projectClass() projectWithFile:path];
 }
 
 IDEWorkspace* workspaceWithSettings(GBSettings* settings) {
@@ -189,21 +189,21 @@ int main(int argc, const char * argv[]) {
   @autoreleasepool {
     CommanderAutoRunner autorunner;
 
+
 #pragma mark - list
 
     OptionDefinitionVector listOpts = {
+      { 'f', keys.files,            @"List files",                              GBValueNone },
+      { 'x', keys.xcconfig,         @"List base xcconfig files",                GBValueNone },
+
       { 0,	 nil,                   @"Project specifiers",                      GBOptionSeparator },
       { 'p', keys.project,          @"Specify the project",                     GBValueRequired },
       { 'c', keys.configuration,    @"Specify or list configurations",          GBValueOptional },
       { 't', keys.target,           @"Specify or list targets",                 GBValueOptional },
-      { 'g', keys.group,            @"Specify or list groups",                  GBValueOptional },
-
-      { 0,	 nil,                   @"List options",                            GBOptionSeparator },
-      { 'f', keys.files,            @"List files",                              GBValueNone },
-      { 'x', keys.xcconfig,         @"List base xcconfig files",                GBValueNone }
+      { 'g', keys.group,            @"Specify or list groups",                  GBValueOptional }
     };
 
-    Command& list = commander.addCommand({"list", "List the contents of the specified workspace or project", listOpts});
+    Command& list = commander.addCommand({"list", "List the contents of the specified project", listOpts});
     list.addGlobalOption({ 'v', keys.verbose, @"Print more information", GBValueNone});
     list.setRunBlock(^int(StringVector args, GBSettings *settings, Command &command) {
       PBXProject* project = projectWithSettings(settings);
@@ -348,7 +348,7 @@ int main(int argc, const char * argv[]) {
 
       if (![configList buildConfigurationExistsForName:configName]) {
         if (![settings boolForKey:keys.add]) return 2;
-        [configList addBuildConfiguration:[[XCBuildConfiguration alloc] initWithName:configName]];
+        [configList addBuildConfiguration:[[buildConfigurationClass() alloc] initWithName:configName]];
       }
 
       XCBuildConfiguration* config = [configList buildConfigurationForName:configName];
