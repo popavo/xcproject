@@ -60,6 +60,8 @@ struct XCProjectKeys {
     verbose(@"verbose") { }
 };
 
+extern XCProjectKeys keys;
+
 #import <iostream>
 
 inline std::ostream& operator <<(std::ostream& OS, NSString* string) {

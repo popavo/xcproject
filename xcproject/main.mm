@@ -7,6 +7,7 @@
 //
 
 #import <BGCommander.h>
+#import "GBSettings+XCProject.h"
 
 XCProjectKeys keys;
 
@@ -259,7 +260,6 @@ int main(int argc, const char * argv[]) {
     add.setRunBlock(^int(StringVector args, GBSettings *settings, Command &command) {
       if (args.empty()) return 2;
       NSString* type = [settings objectForKey:keys.type];
-      BOOL verbose = [settings boolForKey:keys.verbose];
 
       if (!stringContainsStringLike(type, keys.group)) standardizePaths(args);
 
@@ -284,7 +284,7 @@ int main(int argc, const char * argv[]) {
         return !(addedGroup && [_group.name isEqualToString:groupName]);
       } else {
         NSArray* refs = [group addFiles:[NSArray stringsFromStringVector:&args] copy:[settings boolForKey:keys.copy] createGroupsRecursively:YES];
-        if (verbose) {
+        if (settings.verbose) {
           for (PBXFileReference* ref in refs) {
             std::cout << "Added " << ref.name << " (" << ref.path << ") to " << group.name << std::endl;
           }
@@ -377,9 +377,14 @@ int main(int argc, const char * argv[]) {
 
       [config setBaseConfigurationReference:configRef];
 
-      return ![project writeToFileSystemProjectFile:YES userFile:NO checkNeedsRevert:NO];
+      if (settings.dry) {
+        std::cout << "Successfully set configuration" << std::endl;
+      } else {
+        return ![project writeToFileSystemProjectFile:YES userFile:NO checkNeedsRevert:NO];
+      }
+
+      return 0;
     });
-    
   }
   return 0;
 }
