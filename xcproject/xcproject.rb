@@ -52,4 +52,4 @@ end
 find_rpaths
 add_rpaths
 
-`#{XCPROJECT_PATH} #{ARGV.join(" ")}`
+exec(XCPROJECT_PATH, *ARGV)
