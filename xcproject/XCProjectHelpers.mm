@@ -59,3 +59,46 @@ void loadAndInitializeFrameworkBundles() {
   
   callIDEInitialize();
 }
+
+@implementation NSString (XCProjectHelpers)
+
+-(NSString*) relativePathFrom:(NSString*)path {
+  if (!self || !path) return nil;
+  NSArray *anchorComponents = [path pathComponents];
+  NSArray *pathComponents = [self pathComponents];
+
+  NSInteger componentsInCommon = MIN([pathComponents count], [anchorComponents count]);
+  for (NSInteger i = 0, n = componentsInCommon; i < n; i++) {
+    if (![[pathComponents objectAtIndex:i] isEqualToString:[anchorComponents objectAtIndex:i]]) {
+      componentsInCommon = i;
+      break;
+    }
+  }
+
+  NSUInteger numberOfParentComponents = [anchorComponents count] - componentsInCommon;
+  NSUInteger numberOfPathComponents = [pathComponents count] - componentsInCommon;
+
+  NSMutableArray *relativeComponents = [NSMutableArray arrayWithCapacity:numberOfParentComponents + numberOfPathComponents];
+  for (NSInteger i = 0; i < numberOfParentComponents; i++) {
+    [relativeComponents addObject:@".."];
+  }
+  [relativeComponents addObjectsFromArray:[pathComponents subarrayWithRange:NSMakeRange(componentsInCommon, numberOfPathComponents)]];
+  return [NSString pathWithComponents:relativeComponents];
+}
+
+-(NSString*) expandPath {
+  if (!self) return nil;
+  NSString* expanded = nil;
+  if (!self.isAbsolutePath) {
+    expanded = [[[[NSFileManager defaultManager] currentDirectoryPath] stringByAppendingPathComponent:self] stringByStandardizingPath];
+  } else {
+    expanded = [self stringByStandardizingPath];
+  }
+  return expanded;
+}
+
+-(NSString*) dirname {
+  return self.stringByDeletingLastPathComponent;
+}
+
+@end

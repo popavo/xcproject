@@ -37,7 +37,11 @@ struct XCProjectKeys {
   // Add
   NSString* type;
 
-  // Add/Set-config  
+  // Remove
+  NSString* trash;
+  
+
+  // Add/Remove/Set-config
   NSString* dry;
   NSString* copy;
 
@@ -74,8 +78,13 @@ inline std::ostream& operator <<(std::ostream& OS, NSString* string) {
   return OS;
 }
 
+inline std::ostream& operator <<(std::ostream& OS, PBXGlobalID* globalID) {
+  OS << globalID.hexString;
+  return OS;
+}
+
 inline std::ostream& operator <<(std::ostream& OS, PBXProject* project) {
-  OS << [project name] << " " << [project path] << " (" << [[project globalID] hexString] << ")";
+  OS << [project name] << " " << [project path] << " (" << [project globalID] << ")";
   return OS;
 }
 
@@ -84,28 +93,15 @@ inline std::ostream& operator <<(std::ostream& OS, id object) {
   return OS;
 }
 
-FORCE_INLINE NSString* relativePathTo(NSString* self, NSString* path) {
-  NSArray *anchorComponents = [self pathComponents];
-  NSArray *pathComponents = [path pathComponents];
+@interface NSString (XCProjectHelpers)
 
-  NSInteger componentsInCommon = MIN([pathComponents count], [anchorComponents count]);
-  for (NSInteger i = 0, n = componentsInCommon; i < n; i++) {
-    if (![[pathComponents objectAtIndex:i] isEqualToString:[anchorComponents objectAtIndex:i]]) {
-      componentsInCommon = i;
-      break;
-    }
-  }
+-(NSString*)relativePathFrom:(NSString*)path;
 
-  NSUInteger numberOfParentComponents = [anchorComponents count] - componentsInCommon;
-  NSUInteger numberOfPathComponents = [pathComponents count] - componentsInCommon;
+-(NSString*)expandPath;
 
-  NSMutableArray *relativeComponents = [NSMutableArray arrayWithCapacity:numberOfParentComponents + numberOfPathComponents];
-  for (NSInteger i = 0; i < numberOfParentComponents; i++) {
-    [relativeComponents addObject:@".."];
-  }
-  [relativeComponents addObjectsFromArray:[pathComponents subarrayWithRange:NSMakeRange(componentsInCommon, numberOfPathComponents)]];
-  return [NSString pathWithComponents:relativeComponents];
-}
+-(NSString*)dirname;
+
+@end
 
 #define MEMOIZED_CLASS_GETTER(CLASS, GETTER) \
   typedef Class CLASS ## Class; \
