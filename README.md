@@ -3,6 +3,6 @@
 
 a tool to inspect and modify Xcode projects
 
-## Note:
+### Note:
 
 This is still a WIP. I haven't fully tested the code
