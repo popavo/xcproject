@@ -42,11 +42,6 @@ PBXProject* projectWithSettings(GBSettings* settings) {
   return [projectClass() projectWithFile:path];
 }
 
-IDEWorkspace* workspaceWithSettings(GBSettings* settings) {
-  if (!settings) return nil;
-  return nil;
-}
-
 PBXTarget* targetWithProjectAndSettings(PBXProject* project, GBSettings* settings) {
   if (!project || !settings) return nil;
   if (![settings objectForKey:keys.target]) {
@@ -54,14 +49,6 @@ PBXTarget* targetWithProjectAndSettings(PBXProject* project, GBSettings* setting
   }
 
   PBXTarget* target = [project targetNamed:[settings objectForKey:keys.target]];
-
-  if (!target) {
-    for (PBXTarget* _target in [project targets]) {
-      if ([_target.name isEqualToString:[settings objectForKey:keys.target]]) {
-        target = _target;
-      }
-    }
-  }
 
   if (!target) {
     for (PBXTarget* _target in [project allTargetsInDependencyOrder]) {
@@ -104,6 +91,7 @@ StringVector splitStringList(NSString* list) {
   return strings;
 }
 
+// Search the project structure for group(s)
 PBXGroup* findGroup(PBXGroup* root, StringVector& groups) {
   if (!root || groups.empty()) return nil;
   if ([root.name isEqualToString:groups.front()]) return root;
@@ -127,6 +115,7 @@ PBXGroup* findGroup(PBXGroup* root, StringVector& groups) {
   return group ? group : root;
 }
 
+// Search for group(s); adding groups if they are missing
 PBXGroup* getOrCreateGroup(PBXGroup* root, StringVector& groups) {
   PBXGroup* group = findGroup(root, groups);
   if (!group) return nil;
@@ -222,7 +211,7 @@ int main(int argc, const char * argv[]) {
     
     CommanderAutoRunner autorunner;
 
-
+    
 #pragma mark - list
 
     OptionDefinitionVector listOpts = {
@@ -243,33 +232,31 @@ int main(int argc, const char * argv[]) {
       PBXProject* project = projectWithSettings(settings);
       if (!project) return 2;
 
-      id configurationSettings = settings[keys.configuration];
-      id targetSettings = settings[keys.target];
-      id groupSettings = settings[keys.group];
+      id configurationSetting = settings[keys.configuration];
+      id targetSetting = settings[keys.target];
+      id groupSetting = settings[keys.group];
 
-      if (configurationSettings && (!targetSettings)) {
+      if (configurationSetting && (!targetSetting)) {
         listConfigurationList([project buildConfigurationList], settings);
       }
 
-      if (isNumber(targetSettings) && [targetSettings boolValue]) {
-        // List all targets
+      if (isString(targetSetting)) {
+        listTarget(targetWithProjectAndSettings(project, settings), settings);
+      } else if ([settings boolForKey:keys.target]) {
         for (PBXTarget* target in [project targets]) {
           listTarget(target, settings);
         }
-      } else if (isString(targetSettings)) {
-        listTarget(targetWithProjectAndSettings(project, settings), settings);
       }
 
-      if (isNumber(groupSettings) && [groupSettings boolValue]) {
-        // List all groups
+      if (isString(groupSetting)) {
+        // List group info
+        //  if settings[@"files"] -> List all files within group
+        StringVector groups = splitStringList(groupSetting);
+        listGroup(findGroup([project rootGroup], groups), settings);
+      } else if ([settings boolForKey:keys.group]) {
         for (PBXGroup* group in [[project rootGroup] groups]) {
           listGroup(group, settings);
         }
-      } else if (isString(groupSettings)) {
-        // List group info
-        //  if settings[@"files"] -> List all files within group
-        StringVector groups = splitStringList(groupSettings);
-        listGroup(findGroup([project rootGroup], groups), settings);
       }
 
       return 0;
@@ -279,10 +266,10 @@ int main(int argc, const char * argv[]) {
 #pragma mark - add
 
     OptionDefinitionVector addOpts = {
-      { 'd', keys.dry,              @"Only show what the results would be",                                     GBValueNone },
+      { 'n', keys.dry,              @"Only show what the results would be",                                     GBValueNone },
       { 'v', keys.verbose,          @"Print status",                                                            GBValueNone },
 
-      { 'C', keys.copy,             @"Copy files into project directory",                                       GBValueNone },
+      { 'c', keys.copy,             @"Copy files into project directory",                                       GBValueNone },
       { 'T', keys.type,             @"Specify the type of item to add",                                         GBValueRequired },
 
       { 0,	 nil,                   @"Project specifiers",                                                      GBOptionSeparator },
@@ -336,6 +323,37 @@ int main(int argc, const char * argv[]) {
     });
 
 
+#pragma mark - remove
+
+    OptionDefinitionVector removeOpts = {
+      { 'n', keys.dry,              @"Only show what the results would be",                                     GBValueNone },
+      { 'v', keys.verbose,          @"Print status",                                                            GBValueNone },
+      { 'd', keys.trash,            @"Also move items to trash",                                                GBValueNone },
+
+      { 0,	 nil,                   @"Project specifiers",                                                      GBOptionSeparator },
+      { 'p', keys.project,          @"Specify the project",                                                     GBValueRequired }
+    };
+
+    Command& remove = commander.addCommand({"remove", "Remove a project item", removeOpts});
+    remove.addSyntax("remove [-nvd] -p <project> PATH [...]");
+    remove.setRunBlock(^int(bg::StringVector args, GBSettings *settings, bg::Command &command) {
+      if (args.empty()) return 2;
+
+      PBXProject* project = projectWithSettings(settings);
+      if (!project) return 2;
+
+      for (auto const& arg:args) {
+        PBXReference* ref = [project relativeFileReferenceForPath:arg];
+        if (!ref) continue;
+        if (![settings boolForKey:keys.dry]) {
+          [ref deleteFromProjectAndDisk:[settings boolForKey:keys.trash]];
+        }
+      }
+
+      return 0;
+    });
+
+
 #pragma mark - set-config
 
     OptionDefinitionVector setConfigOpts = {
@@ -353,18 +371,17 @@ int main(int argc, const char * argv[]) {
     };
 
     Command& setConfig = commander.addCommand({"set-config", "Set the base configuration of target to an xcconfig", setConfigOpts});
-    setConfig.addSyntax("set-config -adrv -w <workspace> -s <scheme> -c <configuration> [-t <target>] [-g <group>] FILE");
     setConfig.addSyntax("set-config -adrv -p <project> -c <configuration> [-t <target>] [-g <group>] FILE");
     setConfig.setRunBlock(^int(StringVector args, GBSettings *settings, Command &command) {
       if (args.size() != 1) return 2;
 
-      NSString* newConfigFile = (NSString*)args[0];
+      StringRef& newConfigFile = args[0];
       NSString* configPath = nil;
 
-      if (!newConfigFile.isAbsolutePath) {
-        configPath = [[NSFileManager defaultManager].currentDirectoryPath stringByAppendingPathComponent:newConfigFile].stringByStandardizingPath;
+      if (![newConfigFile isAbsolutePath]) {
+        configPath = [[[[NSFileManager defaultManager] currentDirectoryPath] stringByAppendingPathComponent:newConfigFile] stringByStandardizingPath];
       } else {
-        configPath = newConfigFile.stringByStandardizingPath;
+        configPath = [newConfigFile stringByStandardizingPath];
       }
 
       PBXProject* project = projectWithSettings(settings);
