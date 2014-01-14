@@ -1,14 +1,6 @@
-#import <DevToolsCore/PBXObject.h>
-#import <DevToolsCore/PBXChangeNotification.h>
+#import "PBXObject.h"
 
-@interface PBXContainerItem : PBXObject <PBXChangeNotification> {
-    NSString *_comments;
-    NSMutableDictionary *_uiContext;
-}
-
-+(id)archiveNameForKey:(id)arg1;
-+(id)archivableUserAttributes;
-+(id)archivableAttributes;
+@interface PBXContainerItem : PBXObject
 
 -(BOOL)shouldArchiveUserInterfaceContext;
 -(BOOL)shouldArchiveComments;

@@ -10,9 +10,7 @@
 #import <AppKit/AppKit.h>
 #import <sysexits.h>
 
-#import <DVTFoundation/DVTFoundation.h>
 #import <DevToolsCore/DevToolsCore.h>
-#import <IDEFoundation/IDEFoundation.h>
 
 #import "Macros.h"
 #define TAG STR_PROJECT_NAME(PROJECT) // => "CutAndPaste"

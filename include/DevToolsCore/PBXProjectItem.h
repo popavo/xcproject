@@ -1,6 +1,6 @@
-#import <DevToolsCore/PBXContainerItem.h>
+#import "PBXContainerItem.h"
 
-@interface PBXProjectItem : PBXContainerItem { }
+@interface PBXProjectItem : PBXContainerItem
 
 @end
 

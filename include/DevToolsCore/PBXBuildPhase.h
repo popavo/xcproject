@@ -1,11 +1,8 @@
 #import <DevToolsCore/PBXProjectItem.h>
 
-#import <DevToolsCore/PBXContainerScriptingExtensions.h>
-#import <DevToolsCore/XCCompatibilityChecking.h>
-
 @class PBXTarget;
 
-@interface PBXBuildPhase : PBXProjectItem <PBXContainerScriptingExtensions, XCCompatibilityChecking> {
+@interface PBXBuildPhase : PBXProjectItem {
     NSString *_name;
     PBXTarget *_target;
     NSMutableArray *_buildFiles;
