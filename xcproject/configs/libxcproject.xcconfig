@@ -1,0 +1,7 @@
+// xcproject build settings
+
+#include "common.xcconfig"
+
+PRODUCT_NAME = libxcproject
+
+GCC_PREFIX_HEADER = libxcproject/libxcproject-Prefix.pch

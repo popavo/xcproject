@@ -20,3 +20,15 @@ DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
 
 MACOSX_DEPLOYMENT_TARGET = 10.8
 SDKROOT = macosx
+
+XCP_VERSION = 0.1
+XCP_BUILD = 16
+
+XCP_GCC_PREPROCESSOR_DEFINITIONS = PROJECT=XCProject XCP_VERSION=$(XCP_VERSION) XCP_BUILD=$(XCP_BUILD)
+
+ALWAYS_SEARCH_USER_PATHS = NO
+LD_RUNPATH_SEARCH_PATHS = $(DEVELOPER_DIR)/../Frameworks $(DEVELOPER_DIR)/../OtherFrameworks $(DEVELOPER_DIR)/../SharedFrameworks $(DEVELOPER_DIR)/../Plugins /Applications/Xcode.app/Contents/Frameworks /Applications/Xcode.app/Contents/OtherFrameworks /Applications/Xcode.app/Contents/SharedFrameworks /Applications/Xcode.app/Contents/Plugins
+FRAMEWORK_SEARCH_PATHS = $(DEVELOPER_DIR)/../Frameworks $(DEVELOPER_DIR)/../OtherFrameworks $(DEVELOPER_DIR)/../SharedFrameworks
+HEADER_SEARCH_PATHS = $(SRCROOT)/include
+
+OTHER_LDFLAGS = -framework DevToolsCore -framework DevToolsFoundation -framework IDEFoundation -framework DVTFoundation -undefined dynamic_lookup -headerpad_max_install_names

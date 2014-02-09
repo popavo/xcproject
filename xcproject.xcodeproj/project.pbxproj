@@ -8,8 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		D32347B018614CF800DB65AA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32347AD18614CF100DB65AA /* Cocoa.framework */; };
+		D324967618A846AC0020E17D /* Ruby.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D324967518A846AC0020E17D /* Ruby.framework */; };
 		D33CCC721876331300A1B945 /* GBSettings+XCProject.mm in Sources */ = {isa = PBXBuildFile; fileRef = D33CCC711876331300A1B945 /* GBSettings+XCProject.mm */; };
 		D35678D918663C6900D13A28 /* xcproject.rb in CopyFiles */ = {isa = PBXBuildFile; fileRef = D35678D618663C4000D13A28 /* xcproject.rb */; };
+		D374DC2B188E506C0008ED11 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32347AD18614CF100DB65AA /* Cocoa.framework */; };
+		D374DC31188E506C0008ED11 /* libxcproject.mm in Sources */ = {isa = PBXBuildFile; fileRef = D374DC30188E506C0008ED11 /* libxcproject.mm */; };
 		D3892B931860DD220077729E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3892B921860DD220077729E /* main.mm */; };
 		D3892B971860DD220077729E /* xcproject.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = D3892B961860DD220077729E /* xcproject.1 */; };
 		D3892BFD1860E16B0077729E /* XCProjectHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = D3892BFC1860E16B0077729E /* XCProjectHelpers.mm */; };
@@ -60,9 +63,20 @@
 
 /* Begin PBXFileReference section */
 		D32347AD18614CF100DB65AA /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		D324967518A846AC0020E17D /* Ruby.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ruby.framework; path = System/Library/Frameworks/Ruby.framework; sourceTree = SDKROOT; };
 		D33CCC701876331300A1B945 /* GBSettings+XCProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GBSettings+XCProject.h"; sourceTree = "<group>"; };
 		D33CCC711876331300A1B945 /* GBSettings+XCProject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "GBSettings+XCProject.mm"; sourceTree = "<group>"; };
 		D35678D618663C4000D13A28 /* xcproject.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = xcproject.rb; sourceTree = "<group>"; };
+		D374DC03188E50180008ED11 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		D374DC04188E50180008ED11 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		D374DC05188E50180008ED11 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		D374DC2A188E506C0008ED11 /* libxcproject.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libxcproject.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		D374DC2E188E506C0008ED11 /* libxcproject-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "libxcproject-Prefix.pch"; sourceTree = "<group>"; };
+		D374DC2F188E506C0008ED11 /* libxcproject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libxcproject.h; sourceTree = "<group>"; };
+		D374DC30188E506C0008ED11 /* libxcproject.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = libxcproject.mm; sourceTree = "<group>"; };
+		D374DC4A188E52520008ED11 /* libxcproject_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libxcproject_debug.xcconfig; sourceTree = "<group>"; };
+		D374DC4B188E52520008ED11 /* libxcproject_release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libxcproject_release.xcconfig; sourceTree = "<group>"; };
+		D374DC4C188E52520008ED11 /* libxcproject.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libxcproject.xcconfig; sourceTree = "<group>"; };
 		D3892B8C1860DD220077729E /* _xcproject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = _xcproject; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3892B8F1860DD220077729E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D3892B921860DD220077729E /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
@@ -101,11 +115,22 @@
 		D3B50ED91877070A00682FAE /* GBOptionsHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBOptionsHelper.m; sourceTree = "<group>"; };
 		D3B50EDA1877070A00682FAE /* GBSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GBSettings.h; sourceTree = "<group>"; };
 		D3B50EDB1877070A00682FAE /* GBSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GBSettings.m; sourceTree = "<group>"; };
+		D3F7715618A45BD7001FC43A /* ExitVals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExitVals.h; sourceTree = "<group>"; };
+		D3F7715818A467D6001FC43A /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
 		D3FE65A718660A1700543CD9 /* p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = p.h; sourceTree = "<group>"; };
 		D3FE65A818660A1700543CD9 /* p.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = p.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D374DC27188E506C0008ED11 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D324967618A846AC0020E17D /* Ruby.framework in Frameworks */,
+				D374DC2B188E506C0008ED11 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D3892B891860DD220077729E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -117,12 +142,41 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D374DC02188E50180008ED11 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D374DC03188E50180008ED11 /* Foundation.framework */,
+				D374DC04188E50180008ED11 /* CoreData.framework */,
+				D374DC05188E50180008ED11 /* AppKit.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		D374DC2C188E506C0008ED11 /* libxcproject */ = {
+			isa = PBXGroup;
+			children = (
+				D374DC2F188E506C0008ED11 /* libxcproject.h */,
+				D374DC30188E506C0008ED11 /* libxcproject.mm */,
+				D374DC2D188E506C0008ED11 /* Supporting Files */,
+			);
+			path = libxcproject;
+			sourceTree = "<group>";
+		};
+		D374DC2D188E506C0008ED11 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D374DC2E188E506C0008ED11 /* libxcproject-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		D3892B831860DD220077729E = {
 			isa = PBXGroup;
 			children = (
 				D3892C081860E2F50077729E /* BGCommander.xcodeproj */,
 				D3892C011860E1A50077729E /* include */,
 				D3892B911860DD220077729E /* xcproject */,
+				D374DC2C188E506C0008ED11 /* libxcproject */,
 				D3892B8E1860DD220077729E /* Frameworks */,
 				D3892B8D1860DD220077729E /* Products */,
 			);
@@ -132,6 +186,7 @@
 			isa = PBXGroup;
 			children = (
 				D3892B8C1860DD220077729E /* _xcproject */,
+				D374DC2A188E506C0008ED11 /* libxcproject.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -139,8 +194,10 @@
 		D3892B8E1860DD220077729E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D324967518A846AC0020E17D /* Ruby.framework */,
 				D32347AD18614CF100DB65AA /* Cocoa.framework */,
 				D3892B8F1860DD220077729E /* Foundation.framework */,
+				D374DC02188E50180008ED11 /* Other Frameworks */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -186,6 +243,9 @@
 				D3892C301860E5D10077729E /* release.xcconfig */,
 				D3892C311860E5D10077729E /* warnings.xcconfig */,
 				D3892C321860E5D10077729E /* xcproject.xcconfig */,
+				D374DC4A188E52520008ED11 /* libxcproject_debug.xcconfig */,
+				D374DC4B188E52520008ED11 /* libxcproject_release.xcconfig */,
+				D374DC4C188E52520008ED11 /* libxcproject.xcconfig */,
 			);
 			path = configs;
 			sourceTree = "<group>";
@@ -233,6 +293,8 @@
 		D3FE65A618660A1700543CD9 /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				D3F7715618A45BD7001FC43A /* ExitVals.h */,
+				D3F7715818A467D6001FC43A /* Logging.h */,
 				D3FE65A718660A1700543CD9 /* p.h */,
 				D3FE65A818660A1700543CD9 /* p.m */,
 				D33CCC701876331300A1B945 /* GBSettings+XCProject.h */,
@@ -244,7 +306,34 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		D374DC28188E506C0008ED11 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
+		D374DC29188E506C0008ED11 /* libxcproject */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D374DC44188E506D0008ED11 /* Build configuration list for PBXNativeTarget "libxcproject" */;
+			buildPhases = (
+				D374DC26188E506C0008ED11 /* Sources */,
+				D374DC27188E506C0008ED11 /* Frameworks */,
+				D374DC28188E506C0008ED11 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libxcproject;
+			productName = libxcproject;
+			productReference = D374DC2A188E506C0008ED11 /* libxcproject.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		D3892B8B1860DD220077729E /* _xcproject */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D3892B9A1860DD220077729E /* Build configuration list for PBXNativeTarget "_xcproject" */;
@@ -253,7 +342,7 @@
 				D3892B891860DD220077729E /* Frameworks */,
 				D3892B8A1860DD220077729E /* CopyFiles */,
 				D35678D818663C5800D13A28 /* CopyFiles */,
-				D35678DB18663CCF00D13A28 /* ShellScript */,
+				D37F8E5418A2B56100AB415C /* Rename xcproject.rb */,
 			);
 			buildRules = (
 			);
@@ -291,6 +380,7 @@
 			projectRoot = "";
 			targets = (
 				D3892B8B1860DD220077729E /* _xcproject */,
+				D374DC29188E506C0008ED11 /* libxcproject */,
 			);
 		};
 /* End PBXProject section */
@@ -306,23 +396,32 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		D35678DB18663CCF00D13A28 /* ShellScript */ = {
+		D37F8E5418A2B56100AB415C /* Rename xcproject.rb */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Rename xcproject.rb";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"$ACTION\" == \"install\" ];then\n    echo \"   copying xcproject.rb to install directory\"\n    cp -f \"$BUILT_PRODUCTS_DIR\"/xcproject.rb \"$INSTALL_PATH\"/xcproject\nfi";
+			shellScript = "if [ -f \"$BUILT_PRODUCTS_DIR/xcproject.rb\" ];then\nmv \"$BUILT_PRODUCTS_DIR/xcproject.rb\" \"$BUILT_PRODUCTS_DIR/xcproject\"\nelse\necho \"Unable to locate xcproject.rb\"\nfi";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D374DC26188E506C0008ED11 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D374DC31188E506C0008ED11 /* libxcproject.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D3892B881860DD220077729E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -346,6 +445,24 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		D374DC45188E506D0008ED11 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D374DC4A188E52520008ED11 /* libxcproject_debug.xcconfig */;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+			};
+			name = Debug;
+		};
+		D374DC46188E506D0008ED11 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D374DC4B188E52520008ED11 /* libxcproject_release.xcconfig */;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+			};
+			name = Release;
+		};
 		D3892B981860DD220077729E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -402,6 +519,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D374DC44188E506D0008ED11 /* Build configuration list for PBXNativeTarget "libxcproject" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D374DC45188E506D0008ED11 /* Debug */,
+				D374DC46188E506D0008ED11 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		D3892B871860DD220077729E /* Build configuration list for PBXProject "xcproject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
