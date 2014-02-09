@@ -79,6 +79,13 @@
 -(id)productReference;
 -(id)indexedFileList;
 
+-(id)expandedCurrentValueForBuildSetting:(NSString*)arg1;
+-(id)expandedCurrentValueForBuildSetting:(NSString*)arg1 forConfigurationName:(NSString*)arg2;
+-(id)absoluteExpandedPathForString:(NSString*)arg1;
+-(id)absoluteExpandedPathForString:(NSString*)arg1 forBuildConfigurationNamed:(NSString*)arg2;
+-(id)expandedValueForString:(NSString*)arg1;
+-(id)expandedValueForString:(NSString*)arg1 forConfigurationNamed:(NSString*)arg2;
+
 
 -(void)removeObject:(id)arg1;
 -(void)moveObject:(id)arg1 toIndex:(NSUInteger)arg2;

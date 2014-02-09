@@ -21,7 +21,7 @@
 -(id)initWithName:(NSString*)arg1;
 
 -(id)baseBuildConfigurationReferenceLoadErrors;
--(id)parseBaseBuildConfigurationReferenceReturningErrors:(id*)arg1;
+-(PBXBuildSettingsDictionary*)parseBaseBuildConfigurationReferenceReturningErrors:(id*)arg1;
 -(void)setBaseConfigurationReference:(PBXFileReference*)arg1;
 -(PBXFileReference*)baseConfigurationReference;
 -(id)flattenedBuildSettings;

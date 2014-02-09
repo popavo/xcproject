@@ -59,8 +59,8 @@
 -(id)buildConfigurations;
 -(id)defaultConfigurationName;
 -(void)setDefaultConfigurationName:(id)arg1;
--(id)expandedValueForString:(id)arg1;
--(id)expandedValueForString:(id)arg1 forConfigurationNamed:(id)arg2;
+-(id)expandedValueForString:(NSString*)arg1;
+-(id)expandedValueForString:(NSString*)arg1 forConfigurationNamed:(NSString*)arg2;
 
 @end
 

@@ -36,6 +36,7 @@ struct XCProjectKeys {
 
   // Add
   NSString* type;
+  NSString* index;
 
   // Remove
   NSString* trash;
@@ -48,6 +49,9 @@ struct XCProjectKeys {
   // Set-config
   NSString* add;
   NSString* replace;
+
+  // Print-settings
+  NSString* expanded;
 
   // Global
   NSString* help;
@@ -63,8 +67,10 @@ struct XCProjectKeys {
     dry(@"dry"),
     copy(@"copy"),
     type(@"type"),
+    index(@"index"),
     add(@"add"),
     replace(@"replace"),
+    expanded(@"expanded"),
     help(@"help"),
     verbose(@"verbose") { }
 };
@@ -111,4 +117,5 @@ inline std::ostream& operator <<(std::ostream& OS, id object) {
   }
 
 MEMOIZED_CLASS_GETTER(PBXProject, project);
+MEMOIZED_CLASS_GETTER(PBXTarget, target);
 MEMOIZED_CLASS_GETTER(XCBuildConfiguration, buildConfiguration);
