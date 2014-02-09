@@ -14,42 +14,37 @@ XCODE_DEV_PATH = Pathname.new(`xcode-select -p`.strip)
 XCODE_CONTENTS_PATH = XCODE_DEV_PATH.dirname
 XCODE_PATH = XCODE_CONTENTS_PATH.dirname
 
-SUB_RPATHS = ["Frameworks", "OtherFrameworks", "SharedFrameworks", "Plugins"]
+SUB_RPATHS = ["Frameworks", "OtherFrameworks", "SharedFrameworks"]
 
-$rpaths = []
-
-def has_rpath(rpath)
-  has_xcode_in_rpath = false
-
-  $rpaths.each do |path|
+def has_rpath(rpath, rpaths)
+  rpaths.each do |path|
     next unless path == rpath
-    has_xcode_in_rpath = true
-    break
+    return true
   end
-  
-  has_xcode_in_rpath
 end
 
-def add_rpaths(base=XCODE_CONTENTS_PATH)
+def add_rpaths(base, rpaths)
   SUB_RPATHS.each do |subpath|
-    next if has_rpath(XCODE_CONTENTS_PATH + subpath)
-    next if has_rpath(File.join(XCODE_DEV_PATH.to_s, "..", subpath))
-    next if has_rpath(base + subpath)
+    next if has_rpath(XCODE_CONTENTS_PATH + subpath, rpaths)
+    next if has_rpath(XCODE_DEV_PATH.dirname + subpath, rpaths)
+    next if has_rpath(base + subpath, rpaths)
     rpath = base + subpath
     `install_name_tool -add_rpath #{rpath} \"#{XCPROJECT_PATH}\"`
   end
 end
 
-def find_rpaths()
+def find_rpaths
+  paths = []
   load_commands = `otool -l \"#{XCPROJECT_PATH}\"`
-
   load_commands.gsub(/cmd LC_RPATH\n.+?\n\s+path\s+([^ ]+) \(.+?\)/) do |m|
-    $rpaths << $1
+    paths << $1
     "#{m}"
   end
+  paths
 end
 
-find_rpaths
-add_rpaths
+rpaths = find_rpaths
+xcode_path = ENV["xcode"] || XCODE_CONTENTS_PATH
+add_rpaths(xcode_path, rpaths)
 
 exec(XCPROJECT_PATH, *ARGV)
