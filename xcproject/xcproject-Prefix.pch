@@ -15,12 +15,14 @@
 #import "Macros.h"
 #define TAG STR_PROJECT_NAME(PROJECT) // => "CutAndPaste"
 
-#import "p.h"
+#import "ExitVals.h"
 
 #if __cplusplus
 
 #import "XCProjectHelpers.h"
 #import "BGCommander.h"
+
+#import "Logging.h"
 
 #endif
 

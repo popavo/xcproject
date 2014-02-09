@@ -26,4 +26,14 @@
 XCP_EXTERN NSString *npStringFromAnyType(const char *typeCode, ...);
 XCP_EXTERN const char* pStringFromAnyType(const char *typeCode, ...);
 
+#ifdef DEBUG
+
 #define p(arg) NSLog(@"%@", npStringFromAnyType(@encode(__typeof__(arg)), (arg)))
+#define e(arg) fprintf(stderr, "%s\n", pStringFromAnyType(@encode(__typeof__(arg)), (arg)))
+
+#else
+
+#define p(arg)
+#define e(arg)
+
+#endif
