@@ -15,7 +15,7 @@
 
 #undef LOG
 
-# define LOG(_format, ...) fprintf(stderr, "%s\n", [NSString stringWithFormat:npStringFromAnyType(@encode(__typeof__(_format)), (_format)), ## __VA_ARGS__].UTF8String)
+# define LOG(_format, ...) fprintf(stderr, "%s\n", StringRef().appendFormat((_format), ## __VA_ARGS__).c_str())
 
 #else
 
