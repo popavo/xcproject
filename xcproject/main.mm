@@ -248,7 +248,7 @@ int main(int argc, const char * argv[]) {
         { 'g', keys.group,            @"Specify or list groups",                  GBValueOptional }
       };
 
-      Command& list = commander.addCommand({"list", "List the contents of the specified project", listOpts});
+      Command& list = commander.addCommand("list", "List the contents of the specified project", listOpts);
       list.addGlobalOption({ 'V', keys.verbose, @"Print more information", GBValueNone});
       list.registerArrayForKey(keys.configuration);
       list.registerArrayForKey(keys.target);
@@ -313,7 +313,7 @@ int main(int argc, const char * argv[]) {
         { 'g', keys.group,            @"Specify a group path",                                                    GBValueRequired }
       };
 
-      Command& add = commander.addCommand({"add", "Add a project item", addOpts});
+      Command& add = commander.addCommand("add", "Add a project item", addOpts);
       add.setRunBlock(^int(StringVector args, GBSettings *settings, Command &command) {
         if (args.empty()) return MissingArguments;
         NSString* type = [settings objectForKey:keys.type];
@@ -378,7 +378,7 @@ int main(int argc, const char * argv[]) {
         { 'p', keys.project,          @"Specify the project",                                                     GBValueRequired }
       };
 
-      Command& remove = commander.addCommand({"remove", "Remove a project item", removeOpts});
+      Command& remove = commander.addCommand("remove", "Remove a project item", removeOpts);
       remove.addSyntax("remove [-nvd] -p <project> PATH [...]");
       remove.setRunBlock(^int(bg::StringVector args, GBSettings *settings, bg::Command &command) {
         if (args.empty()) return MissingArguments;
@@ -420,7 +420,7 @@ int main(int argc, const char * argv[]) {
         { 'g', keys.group,            @"Specify a group path",                                                    GBValueRequired }
       };
 
-      Command& setConfig = commander.addCommand({"set-config", "Set the base configuration of target to an xcconfig", setConfigOpts});
+      Command& setConfig = commander.addCommand("set-config", "Set the base configuration of target to an xcconfig", setConfigOpts);
       setConfig.addSyntax("set-config -adrv -p <project> -c <configuration> [-t <target>] [-g <group>] FILE");
       setConfig.setDefaultSettingsValueForKey(keys.recursive, @NO);
       setConfig.setRunBlock(^int(StringVector args, GBSettings *settings, Command &command) {
@@ -499,7 +499,7 @@ int main(int argc, const char * argv[]) {
         { 't', keys.target,           @"Specify a target",                                                        GBValueRequired }
       };
 
-      Command& printSettings = commander.addCommand({"print-settings", "Print individual build configuration values", printSettingsOpts});
+      Command& printSettings = commander.addCommand("print-settings", "Print individual build configuration values", printSettingsOpts);
       printSettings.addSyntax("print-settings -p <project> -t <target> [-c <configuration>] [...]");
       printSettings.setDefaultSettingsValueForKey(keys.configuration, @"Debug");
       printSettings.setRunBlock(^int(StringVector args, GBSettings *settings, bg::Command &command) {
