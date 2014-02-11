@@ -40,15 +40,15 @@ struct XCProjectKeys {
 
   // Remove
   NSString* trash;
-  
 
   // Add/Remove/Set-config
   NSString* dry;
   NSString* copy;
+  NSString* recursive;
 
   // Set-config
   NSString* add;
-  NSString* replace;
+  NSString* force;
 
   // Print-settings
   NSString* expanded;
@@ -66,10 +66,11 @@ struct XCProjectKeys {
     dependencies(@"dependencies"),
     dry(@"dry"),
     copy(@"copy"),
+    recursive(@"recursive"),
     type(@"type"),
     index(@"index"),
     add(@"add"),
-    replace(@"replace"),
+    force(@"force"),
     expanded(@"expanded"),
     help(@"help"),
     verbose(@"verbose") { }

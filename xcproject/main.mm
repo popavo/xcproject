@@ -10,8 +10,11 @@
 
 XCProjectKeys keys;
 
+bool isArray(id object) { if (!object) return false; return [object isKindOfClass:[NSArray class]]; }
 bool isString(id object) { if (!object) return false; return [object isKindOfClass:[NSString class]]; }
 bool isNumber(id object) { if (!object) return false; return [object isKindOfClass:[NSNumber class]]; }
+
+#pragma mark - Project Items
 
 PBXProject* projectWithPath(NSString* path) {
   ScopedStdErrRedirect redirect;
@@ -48,17 +51,14 @@ PBXProject* projectWithSettings(GBSettings* settings) {
   return project;
 }
 
-PBXTarget* targetWithProjectAndSettings(PBXProject* project, GBSettings* settings) {
-  if (!project || !settings) return nil;
-  if (![settings objectForKey:keys.target]) {
-    return nil;
-  }
+PBXTarget* targetWithProjectAndName(PBXProject* project, NSString* targetName) {
+  if (!project || !targetName) return nil;
 
-  PBXTarget* target = [project targetNamed:[settings objectForKey:keys.target]];
+  PBXTarget* target = [project targetNamed:targetName];
 
   if (!target) {
     for (PBXTarget* _target in [project allTargetsInDependencyOrder]) {
-      if ([_target.name isEqualToString:[settings objectForKey:keys.target]]) {
+      if ([_target.name isEqualToString:targetName]) {
         target = _target;
       }
     }
@@ -66,6 +66,23 @@ PBXTarget* targetWithProjectAndSettings(PBXProject* project, GBSettings* setting
 
   return target;
 }
+
+PBXTarget* targetWithProjectAndSettings(PBXProject* project, GBSettings* settings) {
+  return targetWithProjectAndName(project, settings[keys.target]);
+}
+
+XCBuildConfiguration* configurationForName(id object, NSString* config) {
+  if ([object isKindOfClass:[PBXProject class]] || [object isKindOfClass:[PBXTarget class]]) {
+    XCConfigurationList* configs = [object buildConfigurationList];
+    if ([configs buildConfigurationExistsForName:config]) {
+      return [configs buildConfigurationForName:config];
+    }
+  }
+
+  return nil;
+}
+
+#pragma mark - Group Helpers
 
 NSString* normalizeColonSeparatedList(NSString* list) {
   if (!list || !stringContainsStringLike(list, @":")) return list;
@@ -100,21 +117,14 @@ StringVector splitStringList(NSString* list) {
 // Search the project structure for group(s)
 PBXGroup* findGroup(PBXGroup* root, StringVector& groups) {
   if (!root) return nil;
-  if (groups.empty() || [root.name isEqualToString:groups.front()]) return root;
+  if (groups.empty()) return root;
 
   PBXGroup* group = nil;
   for (PBXGroup* _group in [root groups]) {
     if ([_group.name isEqualToString:groups.front()]) {
-      group = _group;
+      groups.erase(groups.cbegin());
+      group = findGroup(_group, groups);
       break;
-    }
-  }
-
-  if (group) {
-    groups.erase(groups.cbegin());
-    if (groups.size()) {
-      PBXGroup* _group = findGroup(group, groups);
-      if (_group) group = _group;
     }
   }
 
@@ -129,7 +139,7 @@ PBXGroup* getOrCreateGroup(PBXGroup* root, StringVector& groups, GBSettings* set
   if (groups.size()) {
     NSUInteger index = settings[keys.index] ? [settings unsignedIntegerForKey:keys.index] : 0;
     for (StringVector::iterator i = groups.begin(); i != groups.end(); i++) {
-      PBXGroup* _g = [group createNewGroupAtIndex:index];
+      PBXGroup* _g = [group createNewGroupAtIndex:(index<group.itemCount?index:0)];
       if (!_g) return nil;
       [_g setName:*i];
       group = _g;
@@ -158,43 +168,47 @@ void standardizePaths(StringVector& paths) {
   }
 }
 
-void listConfiguration(XCBuildConfiguration* config, GBSettings* settings) {
-  if (!config || !settings) return;
+#pragma mark - List Helpers
+
+void listConfiguration(XCBuildConfiguration* config, id configSetting, GBSettings* settings) {
+  if (!config || !configSetting || !settings) return;
 
   if ([settings boolForKey:keys.xcconfig]) {
     // print base config file
     PBXFileReference* baseConfig = [config baseConfigurationReference];
-    std::cout << baseConfig.absolutePath << std::endl;
-  } else if (isString(settings[keys.configuration])) {
+    if (baseConfig) std::cout << baseConfig.absolutePath << std::endl;
+  } else if (isString(configSetting) && [config.name isEqualToString:configSetting]) {
     // print settings values
     std::cout << config.flattenedBuildSettings << std::endl;
-  } else if (isNumber(settings[keys.configuration]) && [settings boolForKey:keys.configuration]) {
+  } else if (isNumber(configSetting) && [configSetting boolValue]) {
     // print configuration name
     std::cout << config.name << std::endl;
   }
 }
 
-void listConfigurationList(XCConfigurationList* configList, GBSettings* settings) {
-  if (!configList || !settings) return;
-  id configurationSettings = settings[keys.configuration];
-  if (isNumber(configurationSettings) && [configurationSettings boolValue]) {
+void listConfigurationList(XCConfigurationList* configList, id configSetting, GBSettings* settings) {
+  if (!configList || !configSetting || !settings) return;
+
+  if (isNumber(configSetting) && [configSetting boolValue]) {
     // List all configs
     for (XCBuildConfiguration* config in [configList buildConfigurations]) {
-      listConfiguration(config, settings);
+      listConfiguration(config, configSetting, settings);
     }
-  } else if (isString(configurationSettings)) {
+  } else if (isString(configSetting)) {
     // List config with name
-    if (![configList buildConfigurationExistsForName:configurationSettings]) return;
-    listConfiguration([configList buildConfigurationForName:configurationSettings], settings);
+    if (![configList buildConfigurationExistsForName:configSetting]) return;
+    listConfiguration([configList buildConfigurationForName:configSetting], configSetting, settings);
   }
 }
 
 void listTarget(PBXTarget* target, GBSettings* settings) {
   if (!target || !settings) return;
   // print target info
-  if (settings[keys.configuration]) {
-    listConfigurationList([target buildConfigurationList], settings);
-  } else {
+  for (NSString* configSetting in settings[keys.configuration]) {
+    listConfigurationList([target buildConfigurationList], configSetting, settings);
+  }
+
+  if ([settings[keys.configuration] count] == 0) {
     std::cout << target.name << std::endl;
     if ([settings boolForKey:keys.verbose]) {
       // Print more info about target
@@ -211,15 +225,6 @@ void listGroup(PBXGroup* group, GBSettings* settings) {
       std::cout << ref.name << " (" << ref.absolutePath << ")" << std::endl;
     }
   }
-}
-
-XCBuildConfiguration* projectConfigurationForName(PBXProject* project, NSString* config) {
-  XCConfigurationList* configs = [project buildConfigurationList];
-  if ([configs buildConfigurationExistsForName:config]) {
-    return [configs buildConfigurationForName:config];
-  }
-
-  return nil;
 }
 
 int main(int argc, const char * argv[]) {
@@ -244,37 +249,47 @@ int main(int argc, const char * argv[]) {
       };
 
       Command& list = commander.addCommand({"list", "List the contents of the specified project", listOpts});
-      list.addGlobalOption({ 'v', keys.verbose, @"Print more information", GBValueNone});
+      list.addGlobalOption({ 'V', keys.verbose, @"Print more information", GBValueNone});
+      list.registerArrayForKey(keys.configuration);
+      list.registerArrayForKey(keys.target);
+      list.registerArrayForKey(keys.group);
       list.setRunBlock(^int(StringVector args, GBSettings *settings, Command &command) {
         PBXProject* project = projectWithSettings(settings);
 
-        id configurationSetting = settings[keys.configuration];
-        id targetSetting = settings[keys.target];
-        id groupSetting = settings[keys.group];
+        NSArray* configurationSettings = settings[keys.configuration];
+        NSArray* targetSettings = settings[keys.target];
+        NSArray* groupSettings = settings[keys.group];
 
-        if (configurationSetting && (!targetSetting)) {
-          listConfigurationList([project buildConfigurationList], settings);
-        }
-
-        if (isString(targetSetting)) {
-          listTarget(targetWithProjectAndSettings(project, settings), settings);
-        } else if ([settings boolForKey:keys.target]) {
-          for (PBXTarget* target in [project targets]) {
-            listTarget(target, settings);
+        if ([targetSettings count] == 0) {
+          for (id configSetting in configurationSettings) {
+            listConfigurationList([project buildConfigurationList], configSetting, settings);
           }
         }
 
-        if (isString(groupSetting)) {
-          // List group info
-          //  if settings[@"files"] -> List all files within group
-          StringVector groups = splitStringList(groupSetting);
-          listGroup(findGroup([project rootGroup], groups), settings);
-        } else if ([settings boolForKey:keys.group]) {
-          for (PBXGroup* group in [[project rootGroup] groups]) {
-            listGroup(group, settings);
+        for (id targetSetting in targetSettings) {
+          if (isString(targetSetting)) {
+            listTarget(targetWithProjectAndName(project, targetSetting), settings);
+          } else if (isNumber(targetSetting) && [targetSetting boolValue]) {
+            for (PBXTarget* target in [project targets]) {
+              listTarget(target, settings);
+            }
           }
         }
-        
+
+        // TODO: This either should be removed or a better definition of what to list about groups
+        for (id groupSetting in groupSettings) {
+          if (isString(groupSetting)) {
+            // List group info
+            //  if settings[@"files"] -> List all files within group
+            StringVector groups = @[groupSetting].stringVector;
+            listGroup(findGroup([project rootGroup], groups), settings);
+          } else if (isNumber(groupSetting) && [groupSetting boolValue]) {
+            for (PBXGroup* group in [[project rootGroup] groups]) {
+              listGroup(group, settings);
+            }
+          }
+        }
+
         return 0;
       });
     }
@@ -288,13 +303,14 @@ int main(int argc, const char * argv[]) {
         { 'v', keys.verbose,          @"Print status",                                                            GBValueNone },
 
         { 'c', keys.copy,             @"Copy files into project directory",                                       GBValueNone },
+        { 'r', keys.recursive,        @"Create groups recursively",                                               GBValueNone },
         { 'T', keys.type,             @"Specify the type of item to add",                                         GBValueRequired },
         { 'i', keys.index,            @"Specify the index of the added item",                                     GBValueRequired },
 
         { 0,	 nil,                   @"Project specifiers",                                                      GBOptionSeparator },
         { 'p', keys.project,          @"Specify the project",                                                     GBValueRequired },
         { 't', keys.target,           @"Specify a target",                                                        GBValueRequired },
-        { 'g', keys.group,            @"Specify a group/colon separated list of groups",                          GBValueRequired }
+        { 'g', keys.group,            @"Specify a group path",                                                    GBValueRequired }
       };
 
       Command& add = commander.addCommand({"add", "Add a project item", addOpts});
@@ -312,7 +328,7 @@ int main(int argc, const char * argv[]) {
         }
 
         NSString* groupName = [settings objectForKey:keys.group];
-        StringVector groups = splitStringList(groupName);
+        StringVector groups = [[groupName pathComponents] stringVector];
         PBXGroup* group = findGroup([project rootGroup], groups);
         if (!group) return 2;
 
@@ -321,21 +337,28 @@ int main(int argc, const char * argv[]) {
             groups.push_back(arg);
           }
 
-          PBXGroup* _group = getOrCreateGroup(group, groups, settings);
-          if (!_group) return 2;
-
-          return ![_group.name isEqualToString:groupName];
+          group = getOrCreateGroup(group, groups, settings);
+          if (!group) return 2;
         } else {
           NSUInteger index = settings[keys.index] ? [settings unsignedIntegerForKey:keys.index] : 0;
           
-          NSArray* refs = [group addFiles:[NSArray stringsFromStringVector:&args] atIndex:index copy:[settings boolForKey:keys.copy] createGroupsRecursively:YES];
+          NSArray* refs = [group addFiles:[NSArray stringsFromStringVector:&args]
+                                  atIndex:(index<group.itemCount?index:0)
+                                     copy:[settings boolForKey:keys.copy]
+                  createGroupsRecursively:[settings boolForKey:keys.recursive]];
+          if (!refs || refs.count == 0) {
+            return 2;
+          }
+
           if (settings.verbose) {
             for (PBXFileReference* ref in refs) {
               std::cout << "Added " << ref.name << " (" << ref.path << ") to " << group.name << std::endl;
             }
           }
-          
-          return refs.count == 0;
+        }
+
+        if (!settings.dry) {
+          return ![project writeToFileSystemProjectFile:YES userFile:NO checkNeedsRevert:NO];
         }
         
         return 0;
@@ -370,6 +393,10 @@ int main(int argc, const char * argv[]) {
           }
         }
         
+        if (!settings.dry) {
+          return ![project writeToFileSystemProjectFile:YES userFile:NO checkNeedsRevert:NO];
+        }
+
         return 0;
       });
     }
@@ -381,7 +408,8 @@ int main(int argc, const char * argv[]) {
       OptionDefinitionVector setConfigOpts = {
         { 'a', keys.add,              @"Add any missing items to project",                                        GBValueNone },
         { 'd', keys.dry,              @"Only show what the results would be",                                     GBValueNone },
-        { 'r', keys.replace,          @"Replace an existing xcconfig",                                            GBValueNone },
+        { 'r', keys.recursive,        @"Create groups recursively",                                               GBValueNone },
+        { 'f', keys.force,            @"Replace an existing xcconfig",                                            GBValueNone },
         { 'v', keys.verbose,          @"Print status",                                                            GBValueNone },
         { 'C', keys.copy,             @"Copy files into project directory",                                       GBValueNone },
 
@@ -389,22 +417,17 @@ int main(int argc, const char * argv[]) {
         { 'p', keys.project,          @"Specify the project",                                                     GBValueRequired },
         { 'c', keys.configuration,    @"Specify a configuration",                                                 GBValueRequired },
         { 't', keys.target,           @"Specify a target",                                                        GBValueRequired },
-        { 'g', keys.group,            @"Specify a group/colon separated list of groups",                          GBValueRequired }
+        { 'g', keys.group,            @"Specify a group path",                                                    GBValueRequired }
       };
 
       Command& setConfig = commander.addCommand({"set-config", "Set the base configuration of target to an xcconfig", setConfigOpts});
       setConfig.addSyntax("set-config -adrv -p <project> -c <configuration> [-t <target>] [-g <group>] FILE");
+      setConfig.setDefaultSettingsValueForKey(keys.recursive, @NO);
       setConfig.setRunBlock(^int(StringVector args, GBSettings *settings, Command &command) {
         if (args.size() != 1) die(InvalidArguments, @"Invalid arguments");
 
         StringRef& newConfigFile = args[0];
-        NSString* configPath = nil;
-
-        if (![newConfigFile isAbsolutePath]) {
-          configPath = [[[[NSFileManager defaultManager] currentDirectoryPath] stringByAppendingPathComponent:newConfigFile] stringByStandardizingPath];
-        } else {
-          configPath = [newConfigFile stringByStandardizingPath];
-        }
+        NSString* configPath = [newConfigFile expandPath];
 
         PBXProject* project = projectWithSettings(settings);
 
@@ -434,18 +457,18 @@ int main(int argc, const char * argv[]) {
         PBXFileReference* baseConfigRef = [config baseConfigurationReference];
 
         if (baseConfigRef && [baseConfigRef.absolutePath isEqualToString:configPath]) return 0;
-        if (baseConfigRef && ![settings boolForKey:keys.replace]) return 2;
+        if (baseConfigRef && ![settings boolForKey:keys.force]) return 2;
 
         // Look for file in project
         PBXFileReference* configRef = [project fileReferenceForPath:configPath];
 
         if (!configRef) {
-          StringVector groups = splitStringList(settings[keys.group]);
+          StringVector groups = [[settings[keys.group] pathComponents] stringVector];
           PBXGroup* group = getOrCreateGroup([project rootGroup], groups, settings);
           if (!group) group = [project rootGroup];
           if (!group) return 2;
 
-          NSArray* refs = [group addFiles:@[configPath] copy:[settings boolForKey:keys.copy] createGroupsRecursively:NO];
+          NSArray* refs = [group addFiles:@[configPath] copy:[settings boolForKey:keys.copy] createGroupsRecursively:[settings boolForKey:keys.recursive]];
           if (refs && refs.count) {
             configRef = refs[0];
           }
@@ -478,7 +501,7 @@ int main(int argc, const char * argv[]) {
 
       Command& printSettings = commander.addCommand({"print-settings", "Print individual build configuration values", printSettingsOpts});
       printSettings.addSyntax("print-settings -p <project> -t <target> [-c <configuration>] [...]");
-      printSettings.setDefaultSettingsValue(keys.configuration, @"Debug");
+      printSettings.setDefaultSettingsValueForKey(keys.configuration, @"Debug");
       printSettings.setRunBlock(^int(StringVector args, GBSettings *settings, bg::Command &command) {
         if (args.empty()) die(MissingArguments, @"No arguments");
 

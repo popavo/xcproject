@@ -17,7 +17,7 @@
 
 #import "ExitVals.h"
 
-#if __cplusplus
+#if (__cplusplus)
 
 #import "XCProjectHelpers.h"
 #import "BGCommander.h"
