@@ -11,9 +11,9 @@
 
 #import "p.h"
 
-#if defined(DEBUG)
-
 #undef LOG
+
+#if defined(DEBUG)
 
 #define LOG(_format, ...) fprintf(stderr, "%s\n", StringRef().appendFormat((_format), ##__VA_ARGS__).c_str())
 
