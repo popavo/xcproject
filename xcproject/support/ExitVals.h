@@ -14,7 +14,6 @@
 #define MissingArguments -1
 #define InvalidArguments 10
 
-
 #define ItemNotFound 20
 
 #endif

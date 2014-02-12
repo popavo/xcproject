@@ -9,6 +9,4 @@
 #ifndef LIBXCPROJECT_H
 #define LIBXCPROJECT_H
 
-
-
 #endif

@@ -2,11 +2,14 @@
 
 void loadAndInitializeFrameworkBundles();
 
-// Temporary redirect stderr to /dev/null in order not to print plugin loading errors
-// Adapted from http://stackoverflow.com/questions/4832603/how-could-i-temporary-redirect-stdout-to-a-file-in-a-c-program/4832902#4832902
+// Temporary redirect stderr to /dev/null in order not to print plugin loading
+// errors
+// Adapted from
+// http://stackoverflow.com/questions/4832603/how-could-i-temporary-redirect-stdout-to-a-file-in-a-c-program/4832902#4832902
 class ScopedStdErrRedirect {
   int saved_stderr;
-public:
+
+ public:
   ScopedStdErrRedirect() {
     fflush(stderr);
     saved_stderr = dup(STDERR_FILENO);
@@ -57,64 +60,65 @@ struct XCProjectKeys {
   NSString* help;
   NSString* verbose;
 
-  XCProjectKeys() : project(@"project"),
-    configuration(@"configuration"),
-    target(@"target"),
-    group(@"group"),
-    files(@"files"),
-    xcconfig(@"xcconfig"),
-    dependencies(@"dependencies"),
-    dry(@"dry"),
-    copy(@"copy"),
-    recursive(@"recursive"),
-    type(@"type"),
-    index(@"index"),
-    add(@"add"),
-    force(@"force"),
-    expanded(@"expanded"),
-    help(@"help"),
-    verbose(@"verbose") { }
+  XCProjectKeys()
+      : project(@"project"),
+        configuration(@"configuration"),
+        target(@"target"),
+        group(@"group"),
+        files(@"files"),
+        xcconfig(@"xcconfig"),
+        dependencies(@"dependencies"),
+        dry(@"dry"),
+        copy(@"copy"),
+        recursive(@"recursive"),
+        type(@"type"),
+        index(@"index"),
+        add(@"add"),
+        force(@"force"),
+        expanded(@"expanded"),
+        help(@"help"),
+        verbose(@"verbose") {}
 };
 
 extern XCProjectKeys keys;
 
 #import <iostream>
 
-inline std::ostream& operator <<(std::ostream& OS, NSString* string) {
+inline std::ostream& operator<<(std::ostream& OS, NSString* string) {
   OS << string.UTF8String;
   return OS;
 }
 
-inline std::ostream& operator <<(std::ostream& OS, PBXGlobalID* globalID) {
+inline std::ostream& operator<<(std::ostream& OS, PBXGlobalID* globalID) {
   OS << globalID.hexString;
   return OS;
 }
 
-inline std::ostream& operator <<(std::ostream& OS, PBXProject* project) {
+inline std::ostream& operator<<(std::ostream& OS, PBXProject* project) {
   OS << [project name] << " " << [project path] << " (" << [project globalID] << ")";
   return OS;
 }
 
-inline std::ostream& operator <<(std::ostream& OS, id object) {
+inline std::ostream& operator<<(std::ostream& OS, id object) {
   OS << [NSString stringWithFormat:@"%@", object];
   return OS;
 }
 
 @interface NSString (XCProjectHelpers)
 
--(NSString*)relativePathFrom:(NSString*)path;
+- (NSString*)relativePathFrom:(NSString*)path;
 
--(NSString*)expandPath;
+- (NSString*)expandPath;
 
--(NSString*)dirname;
+- (NSString*)dirname;
 
 @end
 
-#define MEMOIZED_CLASS_GETTER(CLASS, GETTER) \
-  typedef Class CLASS ## Class; \
-  FORCE_INLINE CLASS ## Class GETTER ## Class() { \
-    static CLASS ## Class res = NSClassFromString(@# CLASS); \
-    return res; \
+#define MEMOIZED_CLASS_GETTER(CLASS, GETTER)               \
+  typedef Class CLASS##Class;                              \
+  FORCE_INLINE CLASS##Class GETTER##Class() {              \
+    static CLASS##Class res = NSClassFromString(@ #CLASS); \
+    return res;                                            \
   }
 
 MEMOIZED_CLASS_GETTER(PBXProject, project);

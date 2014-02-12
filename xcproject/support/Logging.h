@@ -15,11 +15,11 @@
 
 #undef LOG
 
-# define LOG(_format, ...) fprintf(stderr, "%s\n", StringRef().appendFormat((_format), ## __VA_ARGS__).c_str())
+#define LOG(_format, ...) fprintf(stderr, "%s\n", StringRef().appendFormat((_format), ##__VA_ARGS__).c_str())
 
 #else
 
-# define LOG(_format, ...)
+#define LOG(_format, ...)
 
 #endif
 

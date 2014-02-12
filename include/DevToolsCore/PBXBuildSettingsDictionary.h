@@ -1,25 +1,25 @@
 @interface PBXBuildSettingsDictionary : NSMutableDictionary {
-    NSMutableDictionary *_buildSettings;
-    NSMutableDictionary *_conditionalBuildSettings;
-    NSMutableDictionary *_buildSettingToConditionSetMap;
-    id _delegate;
-    int _definitionLevel;
-    struct {
-        unsigned int delegateWantsWillSet:1;
-        unsigned int delegateWantsDidSet:1;
-        unsigned int delegateWantsShouldExtractQuotedBuildSettingsWhenSplitting:1;
-        unsigned int RESERVED:29;
-    } _bsFlags;
-    NSUInteger _changeCount;
-    NSUInteger _keyChangeCount;
-    NSUndoManager *_undoManager;
+  NSMutableDictionary* _buildSettings;
+  NSMutableDictionary* _conditionalBuildSettings;
+  NSMutableDictionary* _buildSettingToConditionSetMap;
+  id _delegate;
+  int _definitionLevel;
+  struct {
+    unsigned int delegateWantsWillSet : 1;
+    unsigned int delegateWantsDidSet : 1;
+    unsigned int delegateWantsShouldExtractQuotedBuildSettingsWhenSplitting : 1;
+    unsigned int RESERVED : 29;
+  } _bsFlags;
+  NSUInteger _changeCount;
+  NSUInteger _keyChangeCount;
+  NSUndoManager* _undoManager;
 }
 
 + (id)expandedBuildSettingForString:(id)arg1 withExpansionDictionaries:(id)arg2;
-+ (id)baseNameForPropertyName:(id)arg1 returningConditionSet:(id *)arg2;
-+ (id)baseNameForPropertyName:(id)arg1 returningConditionSet:(id *)arg2 returningLocalizedErrorString:(id *)arg3;
-+ (id)dictionaryByParsingStringAsBuildSettingAssignments:(id)arg1 getLocalizedErrorString:(id *)arg2;
-+ (id)buildSettingAssignmentParsedFromString:(id)arg1 getLocalizedErrorString:(id *)arg2;
++ (id)baseNameForPropertyName:(id)arg1 returningConditionSet:(id*)arg2;
++ (id)baseNameForPropertyName:(id)arg1 returningConditionSet:(id*)arg2 returningLocalizedErrorString:(id*)arg3;
++ (id)dictionaryByParsingStringAsBuildSettingAssignments:(id)arg1 getLocalizedErrorString:(id*)arg2;
++ (id)buildSettingAssignmentParsedFromString:(id)arg1 getLocalizedErrorString:(id*)arg2;
 + (id)dictionaryWithDefinitionLevel:(int)arg1;
 + (id)dictionaryWithDictionary:(id)arg1 definitionLevel:(int)arg2;
 + (id)dictionaryWithDictionary:(id)arg1;
@@ -49,8 +49,8 @@
 - (id)conditionalDictionaries;
 - (id)conditionSets;
 
-- (id)baseNameForPropertyName:(id)arg1 returningConditionSet:(id *)arg2;
-- (id)baseNameForPropertyName:(id)arg1 returningConditionSet:(id *)arg2 returningLocalizedErrorString:(id *)arg3;
+- (id)baseNameForPropertyName:(id)arg1 returningConditionSet:(id*)arg2;
+- (id)baseNameForPropertyName:(id)arg1 returningConditionSet:(id*)arg2 returningLocalizedErrorString:(id*)arg3;
 
 - (BOOL)isConditional;
 
@@ -61,11 +61,11 @@
 
 - (id)buildSettingForKeyPath:(id)arg1;
 - (id)buildSettingForKeyPath:(id)arg1 conditionSet:(id)arg2;
-- (id)buildSettingForKeyPath:(id)arg1 getOperation:(int *)arg2;
+- (id)buildSettingForKeyPath:(id)arg1 getOperation:(int*)arg2;
 
 - (void)removeBuildSettingForKeyPath:(id)arg1 conditionSet:(id)arg2;
 - (void)setBuildSetting:(id)arg1 operation:(int)arg2 forKeyPath:(id)arg3 conditionSet:(id)arg4;
-- (id)buildSettingForKeyPath:(id)arg1 conditionSet:(id)arg2 getOperation:(int *)arg3;
+- (id)buildSettingForKeyPath:(id)arg1 conditionSet:(id)arg2 getOperation:(int*)arg3;
 
 - (BOOL)isEqualToDictionary:(id)arg1;
 - (void)addEntriesFromDictionary:(id)arg1;
@@ -78,7 +78,7 @@
 - (NSUInteger)count;
 - (void)_undoRedoBuildSettingOperation:(id)arg1;
 - (id)_buildSettings;
-- (id)copyWithZone:(struct _NSZone *)arg1;
+- (id)copyWithZone:(struct _NSZone*)arg1;
 - (void)_unarchiveArchsStandardSettingsUsingDict:(id)arg1;
 - (void)_archiveArchsStandardSettingsUsingDict:(id)arg1;
 - (id)_absoluteArchiveRepresentationForSDKROOTValue:(id)arg1;

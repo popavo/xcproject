@@ -17,14 +17,13 @@
 // through va_args.
 
 #if TARGET_OS_IPHONE
-    #import <UIKit/UIKit.h>
+#import <UIKit/UIKit.h>
 #else
-    #import <Cocoa/Cocoa.h>
+#import <Cocoa/Cocoa.h>
 #endif
 
-
-XCP_EXTERN NSString *npStringFromAnyType(const char *typeCode, ...);
-XCP_EXTERN const char* pStringFromAnyType(const char *typeCode, ...);
+XCP_EXTERN NSString* npStringFromAnyType(const char* typeCode, ...);
+XCP_EXTERN const char* pStringFromAnyType(const char* typeCode, ...);
 
 #ifdef DEBUG
 

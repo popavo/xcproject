@@ -10,4 +10,3 @@
 #import <unordered_map>
 #import <string>
 #import <Ruby/ruby.h>
-
