@@ -15,11 +15,13 @@ bool isArray(id object) {
     return false;
   return [object isKindOfClass:[NSArray class]];
 }
+
 bool isString(id object) {
   if (!object)
     return false;
   return [object isKindOfClass:[NSString class]];
 }
+
 bool isNumber(id object) {
   if (!object)
     return false;
@@ -156,7 +158,7 @@ PBXGroup* getOrCreateGroup(PBXGroup* root, StringVector& groups, GBSettings* set
   if (groups.size()) {
     NSUInteger index = settings[keys.index] ? [settings unsignedIntegerForKey:keys.index] : 0;
     for (StringVector::iterator i = groups.begin(); i != groups.end(); i++) {
-      PBXGroup* _g = [group createNewGroupAtIndex:(index < group.itemCount ? index : 0)];
+      PBXGroup* _g = [group createNewGroupAtIndex:(index <= group.itemCount ? index : 0)];
       if (!_g)
         return nil;
       [_g setName:*i];
@@ -178,7 +180,7 @@ void standardizePaths(StringVector& paths) {
     StringRef file2;
 
     if (![file isAbsolutePath]) {
-      file2 = [[NSFileManager defaultManager].currentDirectoryPath stringByAppendingPathComponent:file].stringByStandardizingPath;
+      file2 = [[[[NSFileManager defaultManager] currentDirectoryPath] stringByAppendingPathComponent:file] stringByStandardizingPath];
     } else {
       file2 = [file stringByStandardizingPath];
     }
@@ -258,6 +260,8 @@ int main(int argc, const char* argv[]) {
 
     CommanderAutoRunner autorunner;
 
+    Command::AppCommand.addGlobalOption('V', keys.verbose, @"Print more information", GBValueNone);
+
 #pragma mark - list
 
     {
@@ -271,7 +275,6 @@ int main(int argc, const char* argv[]) {
                                          {'g', keys.group, @"Specify or list groups", GBValueOptional}};
 
       Command& list = commander.addCommand("list", "List the contents of the specified project", listOpts);
-      list.addGlobalOption({'V', keys.verbose, @"Print more information", GBValueNone});
       list.registerArrayForKey(keys.configuration);
       list.registerArrayForKey(keys.target);
       list.registerArrayForKey(keys.group);
