@@ -200,7 +200,7 @@ void listConfiguration(XCBuildConfiguration* config, id configSetting, GBSetting
     // print base config file
     PBXFileReference* baseConfig = [config baseConfigurationReference];
     if (baseConfig)
-      std::cout << baseConfig.absolutePath << std::endl;
+      std::cout << baseConfig.resolvedAbsolutePath << std::endl;
   } else if (isString(configSetting) && [config.name isEqualToString:configSetting]) {
     // print settings values
     std::cout << config.flattenedBuildSettings << std::endl;
