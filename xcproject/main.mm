@@ -260,14 +260,16 @@ int main(int argc, const char* argv[]) {
 
     CommanderAutoRunner autorunner;
 
-    Command::AppCommand.addGlobalOption('V', keys.verbose, @"Print more information", GBValueNone);
+    Command::AppCommand.setName("xcproject");
+    Command::AppCommand.addGlobalOption('v', keys.verbose, @"Print more information", GBValueNone);
+    Command::AppCommand.addGlobalOption('d', keys.dry, @"Only show what the results would be", GBValueNone);
 
 #pragma mark - list
 
     {
       OptionDefinitionVector listOpts = {{'f', keys.files, @"List files", GBValueNone},
                                          {'x', keys.xcconfig, @"List base xcconfig files", GBValueNone},
-                                         {'d', keys.dependencies, @"List all dependent targets", GBValueNone},
+                                         {'D', keys.dependencies, @"List all dependent targets", GBValueNone},
                                          {0, nil, @"Project specifiers", GBOptionSeparator},
                                          {'p', keys.project, @"Specify the project", GBValueRequired},
                                          {'c', keys.configuration, @"Specify or list configurations", GBValueOptional},
@@ -323,9 +325,7 @@ int main(int argc, const char* argv[]) {
 #pragma mark - add
 
     {
-      OptionDefinitionVector addOpts = {{'n', keys.dry, @"Only show what the results would be", GBValueNone},
-                                        {'v', keys.verbose, @"Print status", GBValueNone},
-                                        {'c', keys.copy, @"Copy files into project directory", GBValueNone},
+      OptionDefinitionVector addOpts = {{'c', keys.copy, @"Copy files into project directory", GBValueNone},
                                         {'r', keys.recursive, @"Create groups recursively", GBValueNone},
                                         {'T', keys.type, @"Specify the type of item to add", GBValueRequired},
                                         {'i', keys.index, @"Specify the index of the added item", GBValueRequired},
@@ -336,35 +336,23 @@ int main(int argc, const char* argv[]) {
 
       Command& add = commander.addCommand("add", "Add a project item", addOpts);
       add.setRunBlock(^int(StringVector args, GBSettings* settings, Command& command) {
-        if (args.empty())
-          return MissingArguments;
         NSString* type = [settings objectForKey:keys.type];
 
         if (!stringContainsStringLike(type, keys.group))
           standardizePaths(args);
 
         PBXProject* project = projectWithSettings(settings);
+        PBXTarget* target = targetWithProjectAndSettings(project, settings);
 
-        if ([settings objectForKey:keys.target]) {
-          PBXTarget* target = targetWithProjectAndSettings(project, settings);
+        if (settings[keys.target])
           project = [target project];
-        }
 
-        NSString* groupName = [settings objectForKey:keys.group];
-        StringVector groups = [[groupName pathComponents] stringVector];
-        PBXGroup* group = findGroup([project rootGroup], groups);
+        StringVector groups = [[settings[keys.group] pathComponents] stringVector];
+        PBXGroup* group = getOrCreateGroup(project.rootGroup, groups, settings);
         if (!group)
           return 2;
 
-        if (stringContainsStringLike(type, keys.group)) {
-          for (auto const& arg : args) {
-            groups.push_back(arg);
-          }
-
-          group = getOrCreateGroup(group, groups, settings);
-          if (!group)
-            return 2;
-        } else {
+        if (args.size()) {
           NSUInteger index = settings[keys.index] ? [settings unsignedIntegerForKey:keys.index] : 0;
 
           NSArray* refs = [group addFiles:[NSArray stringsFromStringVector:&args]
@@ -393,9 +381,7 @@ int main(int argc, const char* argv[]) {
 #pragma mark - remove
 
     {
-      OptionDefinitionVector removeOpts = {{'n', keys.dry, @"Only show what the results would be", GBValueNone},
-                                           {'v', keys.verbose, @"Print status", GBValueNone},
-                                           {'d', keys.trash, @"Also move items to trash", GBValueNone},
+      OptionDefinitionVector removeOpts = {{'t', keys.trash, @"Also move items to trash", GBValueNone},
                                            {0, nil, @"Project specifiers", GBOptionSeparator},
                                            {'p', keys.project, @"Specify the project", GBValueRequired}};
 
@@ -428,10 +414,8 @@ int main(int argc, const char* argv[]) {
 
     {
       OptionDefinitionVector setConfigOpts = {{'a', keys.add, @"Add any missing items to project", GBValueNone},
-                                              {'d', keys.dry, @"Only show what the results would be", GBValueNone},
                                               {'r', keys.recursive, @"Create groups recursively", GBValueNone},
                                               {'f', keys.force, @"Replace an existing xcconfig", GBValueNone},
-                                              {'v', keys.verbose, @"Print status", GBValueNone},
                                               {'C', keys.copy, @"Copy files into project directory", GBValueNone},
                                               {0, nil, @"Project specifiers", GBOptionSeparator},
                                               {'p', keys.project, @"Specify the project", GBValueRequired},
@@ -440,9 +424,7 @@ int main(int argc, const char* argv[]) {
                                               {'g', keys.group, @"Specify a group path", GBValueRequired}};
 
       Command& setConfig = commander.addCommand("set-config", "Set the base configuration of target to an xcconfig", setConfigOpts);
-      setConfig.addSyntax(
-          "set-config -adrv -p <project> -c <configuration> "
-          "[-t <target>] [-g <group>] FILE");
+      setConfig.addSyntax("set-config [-arfCdV] -p <project> -c <configuration> [-t <target>] [-g <group>] FILE");
       setConfig.setDefaultSettingsValueForKey(keys.recursive, @NO);
       setConfig.setRunBlock(^int(StringVector args, GBSettings* settings, Command& command) {
         if (args.size() != 1)
@@ -494,8 +476,6 @@ int main(int argc, const char* argv[]) {
           StringVector groups = [[settings[keys.group] pathComponents] stringVector];
           PBXGroup* group = getOrCreateGroup([project rootGroup], groups, settings);
           if (!group)
-            group = [project rootGroup];
-          if (!group)
             return 2;
 
           NSArray* refs = [group addFiles:@[ configPath ] copy:[settings boolForKey:keys.copy] createGroupsRecursively:[settings boolForKey:keys.recursive]];
@@ -527,7 +507,7 @@ int main(int argc, const char* argv[]) {
                                                   {'t', keys.target, @"Specify a target", GBValueRequired}};
 
       Command& printSettings = commander.addCommand("print-settings", "Print individual build configuration values", printSettingsOpts);
-      printSettings.addSyntax("print-settings -p <project> -t <target> [-c <configuration>] [...]");
+      printSettings.addSyntax("print-settings -e -p <project> -t <target> [-c <configuration>] [...]");
       printSettings.setDefaultSettingsValueForKey(keys.configuration, @"Debug");
       printSettings.setRunBlock(^int(StringVector args, GBSettings* settings, bg::Command& command) {
         if (args.empty())

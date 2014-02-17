@@ -37,17 +37,17 @@ struct XCProjectKeys {
   NSString* xcconfig;
   NSString* dependencies;
 
+  // Add/Remove/Set-config
+  NSString* dry;
+  NSString* copy;
+  NSString* recursive;
+
   // Add
   NSString* type;
   NSString* index;
 
   // Remove
   NSString* trash;
-
-  // Add/Remove/Set-config
-  NSString* dry;
-  NSString* copy;
-  NSString* recursive;
 
   // Set-config
   NSString* add;
@@ -73,6 +73,7 @@ struct XCProjectKeys {
         recursive(@"recursive"),
         type(@"type"),
         index(@"index"),
+        trash(@"trash"),
         add(@"add"),
         force(@"force"),
         expanded(@"expanded"),
