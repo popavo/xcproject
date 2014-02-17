@@ -473,6 +473,8 @@ int main(int argc, const char* argv[]) {
         PBXFileReference* configRef = [project fileReferenceForPath:configPath];
 
         if (!configRef) {
+          if (![settings boolForKey:keys.add])
+            return 2;
           StringVector groups = [[settings[keys.group] pathComponents] stringVector];
           PBXGroup* group = getOrCreateGroup([project rootGroup], groups, settings);
           if (!group)
