@@ -28,6 +28,25 @@ bool isNumber(id object) {
   return [object isKindOfClass:[NSNumber class]];
 }
 
+void standardizePaths(StringVector& paths) {
+  if (paths.empty())
+    return;
+
+  for (size_t i = 0; i < paths.size(); i++) {
+    StringRef& file = paths[i];
+    StringRef file2;
+
+    if (![file isAbsolutePath]) {
+      file2 = [[[[NSFileManager defaultManager] currentDirectoryPath] stringByAppendingPathComponent:file] stringByStandardizingPath];
+    } else {
+      file2 = [file stringByStandardizingPath];
+    }
+
+    if (file != file2)
+      paths[i] = file2;
+  }
+}
+
 #pragma mark - Project Items
 
 PBXProject* projectWithPath(NSString* path) {
@@ -171,23 +190,51 @@ PBXGroup* getOrCreateGroup(PBXGroup* root, StringVector& groups, GBSettings* set
   return group;
 }
 
-void standardizePaths(StringVector& paths) {
-  if (paths.empty())
-    return;
+PBXReference* referenceForProject(PBXProject* project, NSString* name) {
+  PBXReference* reference = nil;
+  if (!project || !name) return reference;
 
-  for (size_t i = 0; i < paths.size(); i++) {
-    StringRef& file = paths[i];
-    StringRef file2;
-
-    if (![file isAbsolutePath]) {
-      file2 = [[[[NSFileManager defaultManager] currentDirectoryPath] stringByAppendingPathComponent:file] stringByStandardizingPath];
-    } else {
-      file2 = [file stringByStandardizingPath];
+  if ([name isAbsolutePath]) {
+    reference = [project fileReferenceForPath:name];
+  } else {
+    reference = [project relativeFileReferenceForPath:name];
+    if (!reference) {
+      reference = [project fileReferenceForPath:name.expandPath];
     }
 
-    if (file != file2)
-      paths[i] = file2;
+    if (!reference) {
+      reference = [project fileReferenceForFileName:name ignoringCase:YES];
+    }
   }
+
+  if (!reference)
+    reference = [project fileReferenceForPartialPath:name];
+
+  if (reference)
+    return reference;
+
+  StringVector components = [[name pathComponents] stringVector];
+  if (components.empty())
+    return reference;
+
+  PBXGroup* group = findGroup(project.rootGroup, components);
+  if (components.empty()) {
+    return group;
+  }
+
+  if (!reference) {
+    if (components.size() != 1)
+      return reference;
+
+    for (PBXReference* _ref in [group children]) {
+      if ([_ref.name isEqualToString:components[0]]) {
+        reference = _ref;
+        break;
+      }
+    }
+  }
+
+  return reference;
 }
 
 #pragma mark - List Helpers
@@ -270,6 +317,8 @@ int main(int argc, const char* argv[]) {
       OptionDefinitionVector listOpts = {{'f', keys.files, @"List files", GBValueNone},
                                          {'x', keys.xcconfig, @"List base xcconfig files", GBValueNone},
                                          {'D', keys.dependencies, @"List all dependent targets", GBValueNone},
+                                         {'u', keys.UUID, @"List specified item UUIDs", GBValueNone},
+                                         {'e', keys.expanded, @"List expanded values", GBValueNone},
                                          {0, nil, @"Project specifiers", GBOptionSeparator},
                                          {'p', keys.project, @"Specify the project", GBValueRequired},
                                          {'c', keys.configuration, @"Specify or list configurations", GBValueOptional},
@@ -286,6 +335,43 @@ int main(int argc, const char* argv[]) {
         NSArray* configurationSettings = settings[keys.configuration];
         NSArray* targetSettings = settings[keys.target];
         NSArray* groupSettings = settings[keys.group];
+
+        if (args.size()) {
+          BOOL group = ((groupSettings.count == 1) && isNumber(groupSettings[0]) && [groupSettings[0] boolValue]);
+
+          for (auto const& arg:args) {
+            PBXReference* ref = referenceForProject(project, arg);
+            if (!ref)
+              continue;
+            if ([settings boolForKey:keys.UUID]) {
+              // print UUID
+              std::cout << ref.globalID << std::endl;
+            }
+
+            if (group) {
+              if ([settings boolForKey:keys.expanded]) {
+                // print relative group path
+                StringVector comps;
+                for (PBXGroup* g = ref.group; ![g isEqual:project.rootGroup];) {
+                  comps.push_back(g.name);
+                  PBXGroup* _g = g.group;
+                  g = _g;
+                }
+                StringRef groupPath(*comps.rbegin());
+                groupPath.setPreAppend(@"/");
+                for (StringVector::reverse_iterator i = ++comps.rbegin(); i != comps.rend(); i++) {
+                  groupPath.append(*i);
+                }
+                std::cout << groupPath << std::endl;
+              } else {
+                // print parent group
+                std::cout << [[ref group] name] << std::endl;
+              }
+            }
+          }
+
+          return 0;
+        }
 
         if ([targetSettings count] == 0) {
           for (id configSetting in configurationSettings) {
@@ -386,7 +472,7 @@ int main(int argc, const char* argv[]) {
                                            {'p', keys.project, @"Specify the project", GBValueRequired}};
 
       Command& remove = commander.addCommand("remove", "Remove a project item", removeOpts);
-      remove.addSyntax("remove [-nvd] -p <project> PATH [...]");
+      remove.addSyntax("remove [-t] -p <project> [...]");
       remove.setRunBlock(^int(bg::StringVector args, GBSettings* settings, bg::Command& command) {
         if (args.empty())
           return MissingArguments;
@@ -394,9 +480,10 @@ int main(int argc, const char* argv[]) {
         PBXProject* project = projectWithSettings(settings);
 
         for (auto const& arg : args) {
-          PBXReference* ref = [project relativeFileReferenceForPath:arg];
+          PBXReference* ref = referenceForProject(project, arg);
           if (!ref)
             continue;
+
           if (![settings boolForKey:keys.dry]) {
             [ref deleteFromProjectAndDisk:[settings boolForKey:keys.trash]];
           }
@@ -424,7 +511,7 @@ int main(int argc, const char* argv[]) {
                                               {'g', keys.group, @"Specify a group path", GBValueRequired}};
 
       Command& setConfig = commander.addCommand("set-config", "Set the base configuration of target to an xcconfig", setConfigOpts);
-      setConfig.addSyntax("set-config [-arfCdV] -p <project> -c <configuration> [-t <target>] [-g <group>] FILE");
+      setConfig.addSyntax("set-config [-arfC] -p <project> -c <configuration> [-t <target>] [-g <group>] FILE");
       setConfig.setDefaultSettingsValueForKey(keys.recursive, @NO);
       setConfig.setRunBlock(^int(StringVector args, GBSettings* settings, Command& command) {
         if (args.size() != 1)

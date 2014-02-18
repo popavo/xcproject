@@ -36,6 +36,7 @@ struct XCProjectKeys {
   NSString* files;
   NSString* xcconfig;
   NSString* dependencies;
+  NSString* UUID;
 
   // Add/Remove/Set-config
   NSString* dry;
@@ -60,25 +61,16 @@ struct XCProjectKeys {
   NSString* help;
   NSString* verbose;
 
-  XCProjectKeys()
-      : project(@"project"),
-        configuration(@"configuration"),
-        target(@"target"),
-        group(@"group"),
-        files(@"files"),
-        xcconfig(@"xcconfig"),
-        dependencies(@"dependencies"),
-        dry(@"dry"),
-        copy(@"copy"),
-        recursive(@"recursive"),
-        type(@"type"),
-        index(@"index"),
-        trash(@"trash"),
-        add(@"add"),
-        force(@"force"),
-        expanded(@"expanded"),
-        help(@"help"),
-        verbose(@"verbose") {}
+#define xcpk(__key) __key(@ #__key)
+
+  XCProjectKeys() : xcpk(project), xcpk(configuration), xcpk(target), xcpk(group),
+  xcpk(files), xcpk(xcconfig), xcpk(dependencies), xcpk(UUID),
+  xcpk(dry), xcpk(copy), xcpk(recursive),
+  xcpk(type), xcpk(index),
+  xcpk(trash),
+  xcpk(add), xcpk(force),
+  xcpk(expanded),
+  xcpk(help), xcpk(verbose) {}
 };
 
 extern XCProjectKeys keys;
